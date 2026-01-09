@@ -4,17 +4,17 @@ A modern **Learning Management System (LMS)** designed to deliver online courses
 
 ---
 
-## 🚀 Features
+## Features
 
-* 👨‍🎓 Student & Instructor authentication
-* 📚 Course creation & management
-* 🎥 Video-based lessons
-* 📝 Quizzes & assignments
-* 📊 Progress tracking & analytics
-* 💳 Payment integration (optional)
-* 📂 File uploads & resources
-* 🔔 Notifications system
-* 📱 Fully responsive UI
+- 👨‍🎓 Student & Instructor authentication
+- 📚 Course creation & management
+- 🎥 Video-based lessons
+- 📝 Quizzes & assignments
+- 📊 Progress tracking & analytics
+- 💳 Payment integration (optional)
+- 📂 File uploads & resources
+- 🔔 Notifications system
+- 📱 Fully responsive UI
 
 ---
 
@@ -22,20 +22,20 @@ A modern **Learning Management System (LMS)** designed to deliver online courses
 
 **Frontend:**
 
-* React.js
-* Tailwind CSS
-* Redux Toolkit
+- React.js
+- Tailwind CSS
+- Redux Toolkit
 
 **Backend:**
 
-* Node.js
-* Express.js
-* MongoDB
+- Node.js
+- Express.js
+- MongoDB
 
 **Authentication:**
 
-* JWT
-* Role-based access
+- JWT
+- Role-based access
 
 ---
 
@@ -106,11 +106,11 @@ npm start
 
 ## 📌 Future Enhancements
 
-* Live classes integration
-* Certificate generation
-* Admin dashboard
-* Mobile app
-* AI-based recommendations
+- Live classes integration
+- Certificate generation
+- Admin dashboard
+- Mobile app
+- AI-based recommendations
 
 ---
 
@@ -136,7 +136,7 @@ This project is licensed under the **MIT License**
 
 **Riyanshu Sharma**
 
-* GitHub: [https://github.com/Sharmariyanshu](https://github.com/Sharmariyanshu)
+- GitHub: [https://github.com/Riyanshu-256](https://github.com/Riyanshu-256)
 
 ---
 
