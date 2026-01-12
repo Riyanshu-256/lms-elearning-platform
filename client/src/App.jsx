@@ -10,6 +10,7 @@ import Player from "./pages/student/Player";
 
 // Components
 import Loading from "./components/student/Loading";
+import Navbar from "./components/student/Navbar";
 
 // Educator Pages
 import Educator from "./pages/educator/Educator";
@@ -17,19 +18,22 @@ import AddCourse from "./pages/educator/AddCourse";
 import Dashboard from "./pages/educator/Dashboard";
 import MyCourse from "./pages/educator/MyCourses";
 import StudentsEnrolled from "./pages/educator/StudentsEnrolled";
-import Navbar from "./components/student/Navbar";
 
 const App = () => {
-  // Navbar for educator
   const isEducatorRoute = useMatch("/educator/*");
 
   return (
     <div className="text-default min-h-screen bg-white">
       {!isEducatorRoute && <Navbar />}
+
       <Routes>
         {/* Student Routes */}
         <Route path="/" element={<Home />} />
+
+        {/* FIXED: both routes */}
+        <Route path="/course-list" element={<CourseList />} />
         <Route path="/course-list/:input" element={<CourseList />} />
+
         <Route path="/course-details/:id" element={<CourseDetails />} />
         <Route path="/my-enrollments" element={<MyEnrollments />} />
         <Route path="/player/:courseId" element={<Player />} />
