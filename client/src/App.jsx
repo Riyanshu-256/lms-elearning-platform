@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, useMatch } from "react-router-dom";
+import { Route, Routes, useMatch, Navigate } from "react-router-dom";
 
 // Student Pages
 import Home from "./pages/student/Home";
@@ -30,11 +30,17 @@ const App = () => {
         {/* Student Routes */}
         <Route path="/" element={<Home />} />
 
-        {/* FIXED: both routes */}
         <Route path="/course-list" element={<CourseList />} />
         <Route path="/course-list/:input" element={<CourseList />} />
 
         <Route path="/course-details/:id" element={<CourseDetails />} />
+
+        {/* BLOCK OLD ROUTE */}
+        <Route
+          path="/course/:id"
+          element={<Navigate to="/course-list" replace />}
+        />
+
         <Route path="/my-enrollments" element={<MyEnrollments />} />
         <Route path="/player/:courseId" element={<Player />} />
         <Route path="/loading/:path" element={<Loading />} />

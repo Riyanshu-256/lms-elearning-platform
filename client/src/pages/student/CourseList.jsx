@@ -1,40 +1,41 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import SearchBar from "../../components/student/SearchBar";
 import { useParams } from "react-router-dom";
 import CourseCard from "../../components/student/CourseCard";
-import { useState } from "react";
 import { assets } from "../../assets/assets";
 import Footer from "../../components/student/Footer";
 
 const CourseList = () => {
   const { navigate, allCourses } = useContext(AppContext);
   const { input } = useParams();
+
   const [filteredCourse, setFilteredCourse] = useState([]);
 
   useEffect(() => {
     if (allCourses && allCourses.length > 0) {
-      const tempCourses = allCourses.slice();
+      const tempCourses = [...allCourses];
 
-      input
-        ? setFilteredCourse(
-            tempCourses.filter((item) =>
-              item.courseTitle.toLowerCase().includes(input.toLowerCase())
-            )
-          )
-        : setFilteredCourse(tempCourses);
+      if (input) {
+        const result = tempCourses.filter((item) =>
+          item.courseTitle.toLowerCase().includes(input.toLowerCase())
+        );
+        setFilteredCourse(result);
+      } else {
+        setFilteredCourse(tempCourses);
+      }
     }
   }, [allCourses, input]);
 
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-10">
-        {/* Header */}
+        {/* HEADER */}
         <div
-          className="flex flex-col md:flex-row md:items-center md:justify-between 
-                      gap-6 md:gap-24 mb-10"
+          className="flex flex-col md:flex-row md:items-center 
+                     md:justify-between gap-6 md:gap-24 mb-10"
         >
-          {/* Title + Breadcrumb */}
+          {/* Title */}
           <div>
             <h1 className="text-3xl font-bold text-gray-800">Course List</h1>
 
@@ -55,26 +56,40 @@ const CourseList = () => {
           </div>
         </div>
 
+        {/* SEARCH TAG */}
         {input && (
-          <div className="inline-flex items-center gap-4 px-4 py-2 border mt-8 mb-8 text-gray-600">
+          <div
+            className="inline-flex items-center gap-4 px-4 py-2 
+                       border mt-8 mb-8 text-gray-600 rounded-md"
+          >
             <p>{input}</p>
+
             <img
               src={assets.cross_icon}
-              alt=""
-              className="cursor-pointer"
+              alt="clear"
+              className="cursor-pointer w-4"
               onClick={() => navigate("/course-list")}
             />
           </div>
         )}
 
-        {/* Courses Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Course Cards will come here */}
-          {filteredCourse.map((course, index) => (
-            <CourseCard key={index} course={course} />
+        {/* COURSES */}
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 
+                     lg:grid-cols-3 gap-6"
+        >
+          {filteredCourse.map((course) => (
+            <div
+              key={course._id}
+              onClick={() => navigate(`/course-details/${course._id}`)}
+              className="cursor-pointer"
+            >
+              <CourseCard course={course} />
+            </div>
           ))}
         </div>
       </div>
+
       <Footer />
     </>
   );

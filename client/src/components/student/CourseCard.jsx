@@ -41,9 +41,7 @@ const CourseCard = ({ course }) => {
           </h3>
 
           {/* Educator */}
-          {/* <p className="text-xs sm:text-sm text-gray-500">
-            By <span className="font-medium">{course.educator.name}</span>
-          </p> */}
+          <p className="text-xs sm:text-sm text-gray-500">GreatStack</p>
 
           {/* Rating */}
           <div className="flex items-center gap-2">
