@@ -4,7 +4,7 @@ import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 
 const CourseCard = ({ course }) => {
-  const { currency } = useContext(AppContext);
+  const { currency, calculateRating } = useContext(AppContext);
 
   const discountedPrice = (
     course.coursePrice -
@@ -12,53 +12,74 @@ const CourseCard = ({ course }) => {
   ).toFixed(2);
 
   return (
-    <Link to={`/course/${course._id}`}>
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer">
+    <Link to={`/course/${course._id}`} className="group block w-full">
+      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
         {/* Thumbnail */}
-        <div className="relative h-52 w-full overflow-hidden">
+        <div className="relative w-full h-44 sm:h-48 md:h-52 overflow-hidden">
           <img
             src={course.courseThumbnail}
             alt={course.courseTitle}
-            className="w-full h-44 object-cover"
+            loading="lazy"
+            onError={(e) => {
+              e.target.src = assets.placeholder;
+            }}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
 
           {course.discount > 0 && (
-            <span className="absolute top-1 left-3 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+            <span className="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
               {course.discount}% OFF
             </span>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-5 space-y-3">
-          <h3 className="text-[16px] font-semibold text-gray-800 line-clamp-2">
+        <div className="p-4 sm:p-5 space-y-3">
+          {/* Title */}
+          <h3 className="text-sm sm:text-[15px] font-semibold text-gray-800 line-clamp-2">
             {course.courseTitle}
           </h3>
 
-          <p className="text-sm text-gray-500">
+          {/* Educator */}
+          {/* <p className="text-xs sm:text-sm text-gray-500">
             By <span className="font-medium">{course.educator.name}</span>
-          </p>
+          </p> */}
 
           {/* Rating */}
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold">4.5</span>
+            <span className="text-sm font-semibold">
+              {calculateRating(course)}
+            </span>
+
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
-                <img key={i} src={assets.star} className="w-4" />
+                <img
+                  key={i}
+                  src={
+                    i < Math.floor(calculateRating(course))
+                      ? assets.star
+                      : assets.star_blank
+                  }
+                  alt="star"
+                  className="w-3.5 sm:w-4"
+                />
               ))}
             </div>
-            <span className="text-xs text-gray-400">(22)</span>
+
+            <span className="text-xs text-gray-400">
+              {course.courseRatings.length}
+            </span>
           </div>
 
           {/* Price */}
           <div className="flex items-center gap-3">
-            <p className="text-lg font-bold">
+            <p className="text-base sm:text-lg font-bold text-gray-900">
               {currency}
               {discountedPrice}
             </p>
 
             {course.discount > 0 && (
-              <p className="text-sm text-gray-400 line-through">
+              <p className="text-xs sm:text-sm text-gray-400 line-through">
                 {currency}
                 {course.coursePrice}
               </p>
