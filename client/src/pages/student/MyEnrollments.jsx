@@ -130,7 +130,7 @@ const MyEnrollments = () => {
                       <img
                         src={course.courseThumbnail}
                         alt={course.courseTitle}
-                        className="w-20 h-16 rounded-lg object-cover"
+                        className="w-28 h-16 rounded-lg object-cover"
                       />
                       <div>
                         <p className="font-semibold">{course.courseTitle}</p>
