@@ -15,7 +15,7 @@ const CourseCard = ({ course }) => {
     <Link to={`/course/${course._id}`} className="group block w-full">
       <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
         {/* Thumbnail */}
-        <div className="relative w-full h-44 sm:h-48 md:h-52 overflow-hidden">
+        <div className="relative w-full h-44 sm:h-44 md:h-52 overflow-hidden">
           <img
             src={course.courseThumbnail}
             alt={course.courseTitle}
@@ -23,7 +23,7 @@ const CourseCard = ({ course }) => {
             onError={(e) => {
               e.target.src = assets.placeholder;
             }}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-90 h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
 
           {course.discount > 0 && (
@@ -41,7 +41,7 @@ const CourseCard = ({ course }) => {
           </h3>
 
           {/* Educator */}
-          <p className="text-xs sm:text-sm text-gray-500">GreatStack</p>
+          <p className="text-xs sm:text-sm text-gray-500">SkillForge</p>
 
           {/* Rating */}
           <div className="flex items-center gap-2">

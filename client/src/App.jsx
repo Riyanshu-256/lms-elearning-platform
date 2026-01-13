@@ -7,6 +7,7 @@ import CourseList from "./pages/student/CourseList";
 import CourseDetails from "./pages/student/CourseDetails";
 import MyEnrollments from "./pages/student/MyEnrollments";
 import Player from "./pages/student/Player";
+import "quill/dist/quill.snow.css";
 
 // Components
 import Loading from "./components/student/Loading";
