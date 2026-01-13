@@ -14,32 +14,42 @@ export const AppContextProvider = ({ children }) => {
 
   const [allCourses, setAllCourses] = useState([]);
   const [isEducator, setIsEducator] = useState(true);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
 
   // Fetch all courses (mock API)
   const fetchAllCourses = async () => {
     setAllCourses(dummyCourses);
   };
 
+  // Fetch user enrolled courses
+  const fetchUserEnrolledCourses = async () => {
+    setEnrolledCourses(dummyCourses); // mock
+  };
+
   useEffect(() => {
     fetchAllCourses();
+    fetchUserEnrolledCourses();
   }, []);
 
   // Function to calculate average rating
   const calculateRating = (course) => {
-    if (course.courseRatings.length === 0) {
-      return 0;
-    }
-    let totalRating = 0;
-    course.courseRatings.forEach((rating) => {
-      totalRating += rating.rating;
+    if (course.courseRatings.length === 0) return 0;
+
+    let total = 0;
+    course.courseRatings.forEach((r) => {
+      total += r.rating;
     });
-    return totalRating / course.courseRatings.length;
+
+    return total / course.courseRatings.length;
   };
 
   // Function to calculate chapter time
   const calculateChapterTime = (chapter) => {
     let time = 0;
-    chapter.chapterContent.map((lecture) => (time += lecture.lectureDuration));
+    chapter.chapterContent.forEach(
+      (lecture) => (time += lecture.lectureDuration)
+    );
+
     return humanizeDuration(time * 60 * 1000, { units: ["h", "m"] });
   };
 
@@ -47,23 +57,26 @@ export const AppContextProvider = ({ children }) => {
   const calculateCourseDuration = (course) => {
     let time = 0;
 
-    course.courseContent.map((chapter) =>
-      chapter.chapterContent.map((lecture) => (time += lecture.lectureDuration))
+    course.courseContent.forEach((chapter) =>
+      chapter.chapterContent.forEach(
+        (lecture) => (time += lecture.lectureDuration)
+      )
     );
 
     return humanizeDuration(time * 60 * 1000, { units: ["h", "m"] });
   };
 
-  // Function to calculate no. of lectures in this course
+  // Function to calculate lectures count
   const calculateNoOfCourses = (course) => {
-    let totalLectures = 0;
+    let total = 0;
+
     course.courseContent.forEach((chapter) => {
       if (Array.isArray(chapter.chapterContent)) {
-        totalLectures += chapter.chapterContent.length;
+        total += chapter.chapterContent.length;
       }
     });
 
-    return totalLectures;
+    return total;
   };
 
   const value = {
@@ -76,6 +89,8 @@ export const AppContextProvider = ({ children }) => {
     calculateChapterTime,
     calculateCourseDuration,
     calculateNoOfCourses,
+    enrolledCourses,
+    fetchUserEnrolledCourses,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

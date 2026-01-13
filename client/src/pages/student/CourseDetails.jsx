@@ -21,7 +21,7 @@ const CourseDetails = () => {
 
   const [courseData, setCourseData] = useState(null);
   const [openIndex, setOpenIndex] = useState(null);
-  const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false);
+  const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(true);
   const [playerData, setPlayerData] = useState(null);
 
   useEffect(() => {
