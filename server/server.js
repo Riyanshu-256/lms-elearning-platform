@@ -7,7 +7,7 @@ import { clerkWebhooks } from "./controllers/webhooks.js";
 // Initialize Express
 const app = express();
 
-// Connect to the database
+// Connect DB
 await connectDB();
 
 // Middlewares
@@ -15,8 +15,9 @@ app.use(cors());
 
 // Routes
 app.get("/", (req, res) => res.send("API WORKING"));
-// Creates POST API to receive Clerk webhook data
-app.post("/clerk", express.json(), clerkWebhooks);
+
+// ❗ IMPORTANT: RAW BODY for webhook
+app.post("/clerk", express.raw({ type: "application/json" }), clerkWebhooks);
 
 // Port
 const PORT = process.env.PORT || 5000;
