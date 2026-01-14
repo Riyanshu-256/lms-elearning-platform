@@ -7,7 +7,6 @@ const connectDB = async () => {
       console.log("Database Connected Successfully")
     );
 
-    // Sirf URI use karo, extra /dbname mat lagao
     await mongoose.connect(process.env.MONGODB_URI);
   } catch (error) {
     console.log("DB Connection Error:", error);
