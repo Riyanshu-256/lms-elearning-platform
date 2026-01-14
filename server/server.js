@@ -3,17 +3,23 @@ import cors from "cors";
 import "dotenv/config";
 import connectDB from "./configs/mongodb.js";
 import { clerkWebhooks } from "./controllers/webhooks.js";
+import educatorRouter from "./routes/educatorRoutes.js";
+import { clerkMiddleware } from "@clerk/express";
 
 const app = express();
 
 await connectDB();
 
+// Middlewares
 app.use(cors());
+app.use(express.json()); // IMPORTANT
 
-app.get("/", (req, res) => res.send("API WORKING"));
+// Routes
+app.get("/", (req, res) => res.send("API Working"));
+app.post("/clerk", express.json(), clerkWebhooks);
 
-// ⚠️ RAW body middleware
-app.post("/clerk", express.raw({ type: "application/json" }), clerkWebhooks);
+// Protect only educator routes
+app.use("/api/educator", clerkMiddleware(), educatorRouter);
 
 const PORT = process.env.PORT || 5000;
 
