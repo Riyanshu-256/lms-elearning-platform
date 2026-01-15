@@ -35,8 +35,14 @@ export const AppContextProvider = ({ children }) => {
     fetchUserEnrolledCourses();
   }, []);
 
+  // ✅ Correct JWT Token (Backend template)
   const logToken = async () => {
-    console.log(await getToken());
+    try {
+      const token = await getToken({ template: "backend" });
+      console.log("JWT TOKEN:", token);
+    } catch (error) {
+      console.log("Token error:", error);
+    }
   };
 
   useEffect(() => {
@@ -60,6 +66,7 @@ export const AppContextProvider = ({ children }) => {
   // Function to calculate chapter time
   const calculateChapterTime = (chapter) => {
     let time = 0;
+
     chapter.chapterContent.forEach(
       (lecture) => (time += lecture.lectureDuration)
     );
