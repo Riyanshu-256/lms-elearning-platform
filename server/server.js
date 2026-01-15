@@ -6,6 +6,7 @@ import { clerkWebhooks } from "./controllers/webhooks.js";
 import educatorRouter from "./routes/educatorRoutes.js";
 import connectCloudinary from "./configs/cloudinary.js";
 import { clerkMiddleware } from "@clerk/express";
+import courseRouter from "./routes/courseRoute.js";
 
 // Check secret key
 if (!process.env.CLERK_SECRET_KEY) {
@@ -31,6 +32,9 @@ app.post("/clerk", express.json(), clerkWebhooks);
 
 // Educator routes
 app.use("/api/educator", educatorRouter);
+
+// Course routes
+app.use("/api/course", express.json(), courseRouter);
 
 const PORT = process.env.PORT || 5000;
 
