@@ -2,19 +2,18 @@ import { clerkClient } from "@clerk/express";
 import { v2 as cloudinary } from "cloudinary";
 import Course from "../models/Course.js";
 
+// Update role to educator
 export const updateRoleToEducator = async (req, res) => {
   try {
-    console.log("AUTH OBJECT", req.auth);
+    const { userId } = req.auth();
 
-    // Check if req.auth exists first
-    if (!req.auth || !req.auth.userId) {
+    if (!userId) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized user",
       });
     }
 
-    const { userId } = req.auth();
     const user = await clerkClient.users.getUser(userId);
 
     if (user.publicMetadata?.role === "educator") {
@@ -25,9 +24,7 @@ export const updateRoleToEducator = async (req, res) => {
     }
 
     await clerkClient.users.updateUserMetadata(userId, {
-      publicMetadata: {
-        role: "educator",
-      },
+      publicMetadata: { role: "educator" },
     });
 
     res.json({
@@ -48,15 +45,14 @@ export const addCourse = async (req, res) => {
     const { courseData } = req.body;
     const imageFile = req.file;
 
-    // Check if req.auth exists first
-    if (!req.auth || !req.auth.userId) {
+    const { userId: educatorId } = req.auth();
+
+    if (!educatorId) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized user",
       });
     }
-
-    const { userId: educatorId } = req.auth;
 
     if (!imageFile) {
       return res.json({
@@ -65,15 +61,15 @@ export const addCourse = async (req, res) => {
       });
     }
 
-    const parsedCourseData = await JSON.parse(courseData);
+    const parsedCourseData = JSON.parse(courseData);
     parsedCourseData.educator = educatorId;
 
-    const newCourse = await Course.create(parsedCourseData);
-
+    // Upload image first
     const imageUpload = await cloudinary.uploader.upload(imageFile.path);
 
-    newCourse.courseThumbnail = imageUpload.secure_url;
-    await newCourse.save();
+    parsedCourseData.courseThumbnail = imageUpload.secure_url;
+
+    await Course.create(parsedCourseData);
 
     res.json({
       success: true,
@@ -84,6 +80,25 @@ export const addCourse = async (req, res) => {
     res.json({
       success: false,
       message: "Something went wrong",
+    });
+  }
+};
+
+// GET Educator Courses
+export const getEducatorCourses = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+
+    const courses = await Course.find({ educator: userId });
+
+    res.json({
+      success: true,
+      courses,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
     });
   }
 };
