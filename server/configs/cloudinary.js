@@ -1,4 +1,4 @@
-// import clodinary package of v2 version
+// import cloudinary package of v2 version
 import { v2 as cloudinary } from "cloudinary";
 
 // To connect Cloudinary
