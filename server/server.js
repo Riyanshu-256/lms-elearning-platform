@@ -7,6 +7,7 @@ import educatorRouter from "./routes/educatorRoutes.js";
 import connectCloudinary from "./configs/cloudinary.js";
 import { clerkMiddleware } from "@clerk/express";
 import courseRouter from "./routes/courseRoute.js";
+import userRouter from "./routes/userRoutes.js";
 
 // Check secret key
 if (!process.env.CLERK_SECRET_KEY) {
@@ -35,6 +36,9 @@ app.use("/api/educator", educatorRouter);
 
 // Course routes
 app.use("/api/course", express.json(), courseRouter);
+
+// User Routes
+app.use("/api/user", express.json(), userRouter);
 
 const PORT = process.env.PORT || 5000;
 

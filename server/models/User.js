@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
     enrolledCourses: [
       {
         type: mongoose.Schema.Types.ObjectId, // Stores the unique ID of a course document
-        ref: "course", // Creates a reference (relation) with the "course" collection
+        ref: "Course", // Creates a reference (relation) with the "course" collection
       },
     ],
   },

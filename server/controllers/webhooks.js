@@ -19,6 +19,8 @@ export const clerkWebhooks = async (req, res) => {
 
     const { type, data } = evt;
 
+    console.log("Webhook Event:", type); // DEBUG
+
     switch (type) {
       case "user.created":
         await User.create({
