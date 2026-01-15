@@ -4,26 +4,33 @@ import "dotenv/config";
 import connectDB from "./configs/mongodb.js";
 import { clerkWebhooks } from "./controllers/webhooks.js";
 import educatorRouter from "./routes/educatorRoutes.js";
-import { clerkMiddleware } from "@clerk/express";
 import connectCloudinary from "./configs/cloudinary.js";
+import { clerkMiddleware } from "@clerk/express";
+
+// Check secret key
+if (!process.env.CLERK_SECRET_KEY) {
+  console.error("⚠️ CLERK_SECRET_KEY missing in .env");
+}
 
 const app = express();
 
-// Connect to the database
+// DB
 await connectDB();
-// Connect to the Cloudinary
 await connectCloudinary();
 
 // Middlewares
 app.use(cors());
-app.use(express.json()); // IMPORTANT
+app.use(express.json());
+
+// CLERK MIDDLEWARE (ROUTES SE PEHLE)
+app.use(clerkMiddleware());
 
 // Routes
 app.get("/", (req, res) => res.send("API Working"));
 app.post("/clerk", express.json(), clerkWebhooks);
 
-// Protect only educator routes
-app.use("/api/educator", clerkMiddleware(), educatorRouter);
+// Educator routes
+app.use("/api/educator", educatorRouter);
 
 const PORT = process.env.PORT || 5000;
 

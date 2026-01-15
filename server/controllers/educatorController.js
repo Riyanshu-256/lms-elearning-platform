@@ -6,15 +6,15 @@ export const updateRoleToEducator = async (req, res) => {
   try {
     console.log("AUTH OBJECT", req.auth);
 
-    const { userId } = req.auth();
-
-    if (!userId) {
+    // Check if req.auth exists first
+    if (!req.auth || !req.auth.userId) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized user",
       });
     }
 
+    const { userId } = req.auth();
     const user = await clerkClient.users.getUser(userId);
 
     if (user.publicMetadata?.role === "educator") {
@@ -47,7 +47,16 @@ export const addCourse = async (req, res) => {
   try {
     const { courseData } = req.body;
     const imageFile = req.file;
-    const educatorId = req.auth.userId;
+
+    // Check if req.auth exists first
+    if (!req.auth || !req.auth.userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+
+    const { userId: educatorId } = req.auth;
 
     if (!imageFile) {
       return res.json({

@@ -1,30 +1,44 @@
-// Import Clerk client (used to get user details from Clerk)
-import { clerkClient } from "@clerk/express";
+import { verifyToken } from "@clerk/backend";
 
-// Middleware (Protect Educator Routes)
 export const protectEducator = async (req, res, next) => {
   try {
-    // Get logged-in user ID from auth middleware
-    const { userId } = req.auth();
+    console.log("=== AUTH DEBUG ===");
 
-    // Fetch user details from Clerk
-    const response = await clerkClient.users.getUser(userId);
+    const authHeader = req.headers.authorization;
 
-    // Check if user role is NOT educator
-    if (response.publicMetadata.role !== "educator") {
-      return res.json({
+    if (!authHeader || !authHeader.startsWith("Bearer")) {
+      return res.status(401).json({
         success: false,
-        message: "Unauthorized Access",
+        message: "No token provided",
       });
     }
 
-    // If user is educator → allow request to continue
+    const token = authHeader.split(" ")[1];
+
+    // Verify JWT
+    const payload = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY,
+    });
+
+    console.log("TOKEN PAYLOAD:", payload);
+
+    const userId = payload.sub;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+
+    req.userId = userId;
     next();
   } catch (error) {
-    // If any error occurs
-    res.json({
+    console.error("Auth error:", error.message);
+
+    res.status(401).json({
       success: false,
-      message: error.message,
+      message: "Unauthorized user",
     });
   }
 };
