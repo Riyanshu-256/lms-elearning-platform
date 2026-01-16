@@ -73,15 +73,11 @@ export const stripeWebhooks = async (req, res) => {
 
   try {
     switch (event.type) {
-      // PAYMENT SUCCESS
-      case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object;
+      // ✅ PAYMENT SUCCESS
+      case "checkout.session.completed": {
+        const session = event.data.object;
 
-        const sessions = await stripe.checkout.sessions.list({
-          payment_intent: paymentIntent.id,
-        });
-
-        const { purchaseId } = sessions.data[0].metadata;
+        const { purchaseId } = session.metadata;
 
         const purchaseData = await Purchase.findById(purchaseId);
         const userData = await User.findById(purchaseData.userId);
@@ -97,22 +93,21 @@ export const stripeWebhooks = async (req, res) => {
         purchaseData.status = "completed";
         await purchaseData.save();
 
+        console.log("✅ Payment Success - User Enrolled");
+
         break;
       }
 
-      // PAYMENT FAILED
-      case "payment_intent.payment_failed": {
-        const paymentIntent = event.data.object;
-
-        const sessions = await stripe.checkout.sessions.list({
-          payment_intent: paymentIntent.id,
-        });
-
-        const { purchaseId } = sessions.data[0].metadata;
+      // ❌ PAYMENT FAILED
+      case "checkout.session.async_payment_failed": {
+        const session = event.data.object;
+        const { purchaseId } = session.metadata;
 
         const purchaseData = await Purchase.findById(purchaseId);
         purchaseData.status = "failed";
         await purchaseData.save();
+
+        console.log("❌ Payment Failed");
 
         break;
       }

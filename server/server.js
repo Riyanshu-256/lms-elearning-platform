@@ -9,42 +9,39 @@ import { clerkMiddleware } from "@clerk/express";
 import courseRouter from "./routes/courseRoute.js";
 import userRouter from "./routes/userRoutes.js";
 
-// Check secret key
-if (!process.env.CLERK_SECRET_KEY) {
-  console.error("⚠️ CLERK_SECRET_KEY missing in .env");
-}
-
 const app = express();
 
 // DB
 await connectDB();
 await connectCloudinary();
 
-// Middlewares
+// ================= STRIPE WEBHOOK (RAW BODY FIRST) =================
+app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
+
+// ================= NORMAL MIDDLEWARE =================
 app.use(cors());
 app.use(express.json());
 
-// CLERK MIDDLEWARE (ROUTES SE PEHLE)
+// CLERK MIDDLEWARE
 app.use(clerkMiddleware());
 
 // Routes
 app.get("/", (req, res) => res.send("API Working"));
+
+// Clerk webhook
 app.post("/clerk", express.json(), clerkWebhooks);
 
 // Educator routes
 app.use("/api/educator", educatorRouter);
 
 // Course routes
-app.use("/api/course", express.json(), courseRouter);
+app.use("/api/course", courseRouter);
 
 // User Routes
-app.use("/api/user", express.json(), userRouter);
-
-//
-app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
+app.use("/api/user", userRouter);
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+  console.log(` Server running on ${PORT}`);
 });
