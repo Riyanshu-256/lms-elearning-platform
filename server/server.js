@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import connectDB from "./configs/mongodb.js";
-import { clerkWebhooks } from "./controllers/webhooks.js";
+import { clerkWebhooks, stripeWebhooks } from "./controllers/webhooks.js";
 import educatorRouter from "./routes/educatorRoutes.js";
 import connectCloudinary from "./configs/cloudinary.js";
 import { clerkMiddleware } from "@clerk/express";
@@ -39,6 +39,9 @@ app.use("/api/course", express.json(), courseRouter);
 
 // User Routes
 app.use("/api/user", express.json(), userRouter);
+
+//
+app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 
 const PORT = process.env.PORT || 5000;
 

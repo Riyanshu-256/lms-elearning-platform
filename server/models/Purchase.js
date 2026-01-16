@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 
 const purchaseSchema = new mongoose.Schema(
   {
+    // Clerk user IDs are strings, so this must match User._id type
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "User",
       required: true,
     },
