@@ -24,18 +24,20 @@ const CourseDetails = () => {
   const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(true);
   const [playerData, setPlayerData] = useState(null);
 
+  // FETCH COURSE
   useEffect(() => {
-    if (allCourses.length > 0) {
-      const findCourse = allCourses.find((course) => course._id === id);
+    if (Array.isArray(allCourses) && allCourses.length > 0) {
+      const findCourse = allCourses.find((course) => course?._id === id);
       setCourseData(findCourse || null);
     }
   }, [allCourses, id]);
 
   if (!courseData) return <Loading />;
 
+  // SAFE VALUES
   const rating = calculateRating(courseData);
-  const totalRatings = courseData.courseRatings?.length || 0;
-  const totalStudents = courseData.enrolledStudents?.length || 0;
+  const totalRatings = courseData?.courseRatings?.length || 0;
+  const totalStudents = courseData?.enrolledStudents?.length || 0;
   const totalLectures = calculateNoOfCourses(courseData);
   const totalDuration = calculateCourseDuration(courseData);
 
@@ -45,7 +47,6 @@ const CourseDetails = () => {
 
   return (
     <div className="relative bg-gray-50 min-h-screen">
-      {/* Gradient */}
       <div className="absolute top-0 left-0 w-full h-105 bg-linear-to-b from-cyan-100/80 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-20">
@@ -94,13 +95,6 @@ const CourseDetails = () => {
               </span>
             </div>
 
-            <p className="text-sm text-gray-500">
-              Created by{" "}
-              <span className="text-blue-600 font-medium hover:underline cursor-pointer">
-                SkillForge Academy
-              </span>
-            </p>
-
             {/* CURRICULUM */}
             <div>
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -108,7 +102,7 @@ const CourseDetails = () => {
               </h2>
 
               <div className="space-y-4">
-                {courseData.courseContent.map((chapter, index) => (
+                {courseData?.courseContent?.map((chapter, index) => (
                   <div
                     key={index}
                     className="bg-white border rounded-xl shadow-sm overflow-hidden"
@@ -131,14 +125,14 @@ const CourseDetails = () => {
                       </div>
 
                       <p className="text-sm text-gray-500">
-                        {chapter.chapterContent.length} lectures •{" "}
+                        {chapter?.chapterContent?.length || 0} lectures •{" "}
                         {calculateChapterTime(chapter)}
                       </p>
                     </div>
 
                     {openIndex === index && (
                       <ul className="px-5 py-4 space-y-4 border-t">
-                        {chapter.chapterContent.map((lecture, i) => (
+                        {chapter?.chapterContent?.map((lecture, i) => (
                           <li key={i} className="flex justify-between">
                             <div className="flex gap-3">
                               <img
@@ -152,7 +146,7 @@ const CourseDetails = () => {
                                   {lecture.lectureTitle}
                                 </p>
 
-                                {lecture.isPreviewFree && (
+                                {lecture?.isPreviewFree && (
                                   <button
                                     onClick={() =>
                                       setPlayerData({
@@ -171,10 +165,8 @@ const CourseDetails = () => {
 
                             <p className="text-sm text-gray-500">
                               {humanizeDuration(
-                                lecture.lectureDuration * 60 * 1000,
-                                {
-                                  units: ["h", "m"],
-                                }
+                                (lecture?.lectureDuration || 0) * 60 * 1000,
+                                { units: ["h", "m"] }
                               )}
                             </p>
                           </li>
@@ -202,8 +194,8 @@ const CourseDetails = () => {
           {/* RIGHT */}
           <div className="sticky top-24 h-fit">
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-              {/* VIDEO / THUMBNAIL */}
-              <div className="relative w-full aspect-video bg-black overflow-hidden">
+              {/* VIDEO */}
+              <div className="relative w-full aspect-video bg-black">
                 {playerData ? (
                   <Youtube
                     videoId={playerData.videoId}
@@ -230,18 +222,6 @@ const CourseDetails = () => {
 
               {/* CONTENT */}
               <div className="p-6 space-y-5">
-                {/* URGENCY */}
-                <div className="flex items-center gap-2 bg-red-50 px-3 py-2 rounded-lg">
-                  <img
-                    src={assets.time_left_clock_icon}
-                    className="w-4"
-                    alt=""
-                  />
-                  <p className="text-red-600 text-sm font-medium">
-                    5 days left at this price!
-                  </p>
-                </div>
-
                 {/* PRICE */}
                 <div className="flex items-end gap-3">
                   <p className="text-3xl font-bold">
@@ -261,39 +241,15 @@ const CourseDetails = () => {
 
                 {/* STATS */}
                 <div className="grid grid-cols-3 text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <img src={assets.star} className="w-4" alt="" />
-                    <p>{rating.toFixed(1)}</p>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <img src={assets.time_clock_icon} className="w-4" alt="" />
-                    <p>{totalDuration}</p>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <img src={assets.lesson_icon} className="w-4" alt="" />
-                    <p>{totalLectures} lessons</p>
-                  </div>
+                  <p>{rating.toFixed(1)}</p>
+                  <p>{totalDuration}</p>
+                  <p>{totalLectures} lessons</p>
                 </div>
 
-                {/* CTA */}
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-md transition">
+                {/* BUTTON */}
+                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold">
                   {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
                 </button>
-
-                {/* FEATURES */}
-                <div>
-                  <p className="text-lg font-semibold">What you'll get</p>
-
-                  <ul className="ml-4 pt-2 text-sm md:text-default list-disc text-gray-500">
-                    <li>Lifetime access with free updates.</li>
-                    <li>Step-by-step, hands-on project guidance.</li>
-                    <li>Downloadable resources and source code.</li>
-                    <li>Quizzes to test your knowledge.</li>
-                    <li>Certificate of completion.</li>
-                  </ul>
-                </div>
               </div>
             </div>
           </div>

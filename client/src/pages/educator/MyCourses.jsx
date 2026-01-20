@@ -4,19 +4,25 @@ import Loading from "../../components/student/Loading";
 
 const MyCourses = () => {
   const { currency, allCourses } = useContext(AppContext);
-  const [courses, setCourses] = useState(null);
 
-  // Fetch all educator courses
+  // ✅ always array
+  const [courses, setCourses] = useState([]);
+
+  // Fetch educator courses
   const fetchEducationCourses = async () => {
-    setCourses(allCourses);
+    if (Array.isArray(allCourses)) {
+      setCourses(allCourses);
+    } else {
+      setCourses([]); // safety fallback
+    }
   };
 
-  // Run once on mount
   useEffect(() => {
     fetchEducationCourses();
-  }, []);
+  }, [allCourses]);
 
-  if (!courses) return <Loading />;
+  // Loading state
+  if (!allCourses) return <Loading />;
 
   return (
     <div className="w-full min-h-screen bg-gray-50 md:p-8 p-4">
@@ -84,7 +90,7 @@ const MyCourses = () => {
                   <td className="px-6 py-4 font-medium text-emerald-600">
                     {currency}
                     {Math.floor(
-                      course.enrolledStudents.length *
+                      (course.enrolledStudents?.length || 0) *
                         (course.coursePrice -
                           (course.discount * course.coursePrice) / 100)
                     )}
@@ -93,7 +99,7 @@ const MyCourses = () => {
                   {/* STUDENTS */}
                   <td className="px-6 py-4">
                     <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-xs font-medium">
-                      {course.enrolledStudents.length} enrolled
+                      {course.enrolledStudents?.length || 0} enrolled
                     </span>
                   </td>
 

@@ -1,17 +1,53 @@
 import React, { useContext } from "react";
 import { assets } from "../../assets/assets";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { UserButton, useUser, useAuth, useClerk } from "@clerk/clerk-react";
 import { AppContext } from "../../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const isCourseListPage = pathname.includes("/course-list");
 
-  const { isEducator } = useContext(AppContext);
+  const { isEducator, setIsEducator } = useContext(AppContext);
   const { openSignIn } = useClerk();
   const { user } = useUser();
+  const { getToken } = useAuth();
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+  const becomeEducator = async () => {
+    try {
+      if (isEducator) {
+        navigate("/educator");
+        return;
+      }
+
+      const token = await getToken();
+
+      const { data } = await axios.post(
+        `${backendUrl}/api/educator/update-role`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        setIsEducator(true);
+        toast.success(data.message);
+        navigate("/educator");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong!");
+    }
+  };
 
   return (
     <div
@@ -31,57 +67,24 @@ const Navbar = () => {
       <div className="hidden md:flex items-center gap-5 text-gray-600">
         {user && (
           <>
-            <button
-              onClick={() => navigate("/educator")}
-              className="hover:text-blue-600"
-            >
+            <button onClick={becomeEducator}>
               {isEducator ? "Educator Dashboard" : "Become Educator"}
             </button>
 
             <span>|</span>
 
-            <Link to="/my-enrollments" className="hover:text-blue-600">
-              My Enrollments
-            </Link>
+            <Link to="/my-enrollments">My Enrollments</Link>
           </>
         )}
 
-        {/* Auth */}
         {user ? (
           <UserButton />
         ) : (
           <button
             onClick={() => openSignIn()}
-            className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-5 py-2 rounded-full"
           >
             Create Account
-          </button>
-        )}
-      </div>
-
-      {/* Mobile */}
-      <div className="md:hidden flex items-center gap-3 text-gray-600">
-        {user ? (
-          <>
-            <button
-              onClick={() => navigate("/educator")}
-              className="hover:text-blue-600 text-sm"
-            >
-              {isEducator ? "Dashboard" : "Educator"}
-            </button>
-
-            <Link to="/my-enrollments" className="hover:text-blue-600 text-sm">
-              Enrollments
-            </Link>
-
-            <UserButton />
-          </>
-        ) : (
-          <button
-            onClick={() => openSignIn()}
-            className="bg-blue-600 text-white px-4 py-1.5 text-sm rounded-full"
-          >
-            Sign In
           </button>
         )}
       </div>
