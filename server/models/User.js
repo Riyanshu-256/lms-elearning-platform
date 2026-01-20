@@ -1,24 +1,43 @@
-// import mongoose
 import mongoose from "mongoose";
 
-// Create Schema or blueprint of the user
 const userSchema = new mongoose.Schema(
   {
-    _id: { type: String, required: true },
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    imageUrl: { type: String, required: true },
+    _id: {
+      type: String,
+      required: true, // Clerk userId
+    },
+
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true, // prevent duplicate users
+      lowercase: true,
+    },
+
+    imageUrl: {
+      type: String,
+      required: true,
+    },
+
+    resume: {
+      type: String,
+      default: "", // for future use
+    },
+
     enrolledCourses: [
       {
-        type: mongoose.Schema.Types.ObjectId, // Stores the unique ID of a course document
-        ref: "Course", // Creates a reference (relation) with the "course" collection
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
       },
     ],
   },
   { timestamps: true }
 );
 
-// Create User model
-const User = mongoose.model("User", userSchema);
-
-export default User;
+export default mongoose.model("User", userSchema);

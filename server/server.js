@@ -11,37 +11,36 @@ import userRouter from "./routes/userRoutes.js";
 
 const app = express();
 
-// DB
+// ================= DATABASE =================
 await connectDB();
 await connectCloudinary();
 
-// ================= STRIPE WEBHOOK (RAW BODY FIRST) =================
+// ================= STRIPE WEBHOOK =================
+// MUST be before express.json()
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 
 // ================= NORMAL MIDDLEWARE =================
 app.use(cors());
 app.use(express.json());
 
-// CLERK MIDDLEWARE
+// ================= CLERK AUTH =================
 app.use(clerkMiddleware());
 
-// Routes
-app.get("/", (req, res) => res.send("API Working"));
+// ================= ROUTES =================
+app.get("/", (req, res) => {
+  res.send("API Working 🚀");
+});
 
-// Clerk webhook
-app.post("/clerk", express.json(), clerkWebhooks);
+// Clerk Webhook
+app.post("/clerk", express.raw({ type: "application/json" }), clerkWebhooks);
 
-// Educator routes
+// App Routes
 app.use("/api/educator", educatorRouter);
-
-// Course routes
 app.use("/api/course", courseRouter);
-
-// User Routes
 app.use("/api/user", userRouter);
 
+// ================= SERVER =================
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(` Server running on ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

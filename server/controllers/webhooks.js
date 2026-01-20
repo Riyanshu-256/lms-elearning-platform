@@ -4,7 +4,7 @@ import User from "../models/User.js";
 import Purchase from "../models/Purchase.js";
 import Course from "../models/Course.js";
 
-// Stripe init
+// Stripe Init
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // ================= CLERK WEBHOOK =================
@@ -13,17 +13,18 @@ export const clerkWebhooks = async (req, res) => {
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
     const wh = new Webhook(WEBHOOK_SECRET);
 
-    const payload = req.body;
+    // ⚠️ IMPORTANT: raw string body required
+    const payload = JSON.stringify(req.body);
+
     const headers = {
       "svix-id": req.headers["svix-id"],
       "svix-timestamp": req.headers["svix-timestamp"],
       "svix-signature": req.headers["svix-signature"],
     };
 
+    // Verify webhook
     const evt = wh.verify(payload, headers);
     const { type, data } = evt;
-
-    console.log("Clerk Event:", type);
 
     switch (type) {
       case "user.created":
@@ -32,6 +33,7 @@ export const clerkWebhooks = async (req, res) => {
           email: data.email_addresses[0].email_address,
           name: `${data.first_name} ${data.last_name}`,
           imageUrl: data.image_url,
+          resume: "",
         });
         break;
 
@@ -46,11 +48,14 @@ export const clerkWebhooks = async (req, res) => {
       case "user.deleted":
         await User.findByIdAndDelete(data.id);
         break;
+
+      default:
+        console.log("Unhandled Clerk Event:", type);
     }
 
     res.json({ success: true });
   } catch (err) {
-    console.log("Clerk Webhook Error:", err.message);
+    console.error(err);
     res.status(400).json({ error: "Webhook verification failed" });
   }
 };
@@ -67,58 +72,62 @@ export const stripeWebhooks = async (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    console.log("Stripe webhook error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   try {
     switch (event.type) {
+
       // ✅ PAYMENT SUCCESS
       case "checkout.session.completed": {
         const session = event.data.object;
 
-        const { purchaseId } = session.metadata;
+        const purchaseData = await Purchase.findOne({
+          sessionId: session.id,
+        });
 
-        const purchaseData = await Purchase.findById(purchaseId);
+        if (!purchaseData) break;
+
+        purchaseData.status = "completed";
+        await purchaseData.save();
+
         const userData = await User.findById(purchaseData.userId);
         const courseData = await Course.findById(purchaseData.courseId);
 
-        // enroll user
         courseData.enrolledStudents.push(userData._id);
         await courseData.save();
 
         userData.enrolledCourses.push(courseData._id);
         await userData.save();
 
-        purchaseData.status = "completed";
-        await purchaseData.save();
-
-        console.log("✅ Payment Success - User Enrolled");
-
+        console.log("✅ Payment Success");
         break;
       }
 
       // ❌ PAYMENT FAILED
       case "checkout.session.async_payment_failed": {
         const session = event.data.object;
-        const { purchaseId } = session.metadata;
 
-        const purchaseData = await Purchase.findById(purchaseId);
-        purchaseData.status = "failed";
-        await purchaseData.save();
+        const purchaseData = await Purchase.findOne({
+          sessionId: session.id,
+        });
+
+        if (purchaseData) {
+          purchaseData.status = "failed";
+          await purchaseData.save();
+        }
 
         console.log("❌ Payment Failed");
-
         break;
       }
 
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        console.log(`Unhandled Stripe Event: ${event.type}`);
     }
 
     res.json({ received: true });
   } catch (error) {
-    console.log("Stripe webhook handler error:", error.message);
+    console.error(error);
     res.status(500).json({ error: "Webhook handler failed" });
   }
 };

@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const purchaseSchema = new mongoose.Schema(
   {
-    // Clerk user IDs are strings, so this must match User._id type
     userId: {
       type: String,
       ref: "User",
@@ -24,6 +23,12 @@ const purchaseSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "completed", "failed"],
       default: "pending",
+    },
+
+    // Stripe session id
+    sessionId: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }
