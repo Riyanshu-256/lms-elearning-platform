@@ -13,17 +13,19 @@ const CourseList = () => {
   const [filteredCourse, setFilteredCourse] = useState([]);
 
   useEffect(() => {
-    if (allCourses && allCourses.length > 0) {
-      const tempCourses = [...allCourses];
+    if (allCourses?.length > 0) {
+      let tempCourses = [...allCourses];
 
       if (input) {
         const result = tempCourses.filter((item) =>
-          item.courseTitle.toLowerCase().includes(input.toLowerCase())
+          item?.courseTitle?.toLowerCase().includes(input.toLowerCase()),
         );
         setFilteredCourse(result);
       } else {
         setFilteredCourse(tempCourses);
       }
+    } else {
+      setFilteredCourse([]);
     }
   }, [allCourses, input]);
 
@@ -33,7 +35,7 @@ const CourseList = () => {
         {/* HEADER */}
         <div
           className="flex flex-col md:flex-row md:items-center 
-                     md:justify-between gap-6 md:gap-24 mb-10"
+                        md:justify-between gap-6 md:gap-24 mb-10"
         >
           {/* Title */}
           <div>
@@ -52,7 +54,7 @@ const CourseList = () => {
 
           {/* Search */}
           <div className="w-full md:w-105">
-            <SearchBar data={input} />
+            <SearchBar data={input || ""} />
           </div>
         </div>
 
@@ -60,7 +62,7 @@ const CourseList = () => {
         {input && (
           <div
             className="inline-flex items-center gap-4 px-4 py-2 
-                       border mt-8 mb-8 text-gray-600 rounded-md"
+                          border mt-8 mb-8 text-gray-600 rounded-md"
           >
             <p>{input}</p>
 
@@ -76,17 +78,27 @@ const CourseList = () => {
         {/* COURSES */}
         <div
           className="grid grid-cols-1 sm:grid-cols-2 
-                     lg:grid-cols-3 gap-6"
+                        lg:grid-cols-3 gap-6"
         >
-          {filteredCourse.map((course) => (
-            <div
-              key={course._id}
-              onClick={() => navigate(`/course-details/${course._id}`)}
-              className="cursor-pointer"
-            >
-              <CourseCard course={course} />
-            </div>
-          ))}
+          {filteredCourse.length > 0 ? (
+            filteredCourse.map((course) => (
+              <div
+                key={course?._id}
+                onClick={() => {
+                  if (course?._id) {
+                    navigate(`/course-details/${course._id}`);
+                  }
+                }}
+                className="cursor-pointer"
+              >
+                <CourseCard course={course} />
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 col-span-full text-center">
+              No courses found
+            </p>
+          )}
         </div>
       </div>
 

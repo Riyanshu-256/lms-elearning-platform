@@ -6,31 +6,54 @@ import { assets } from "../../assets/assets";
 import humanizeDuration from "humanize-duration";
 import Footer from "../../components/student/Footer";
 import Youtube from "react-youtube";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "@clerk/clerk-react";
 
 const CourseDetails = () => {
   const { id } = useParams();
+  const { getToken } = useAuth();
 
   const {
-    allCourses,
     calculateRating,
     calculateChapterTime,
     calculateCourseDuration,
     calculateNoOfCourses,
     currency,
+    backendUrl,
+    userData,
   } = useContext(AppContext);
 
   const [courseData, setCourseData] = useState(null);
   const [openIndex, setOpenIndex] = useState(null);
-  const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(true);
+  const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false);
   const [playerData, setPlayerData] = useState(null);
 
-  // FETCH COURSE
-  useEffect(() => {
-    if (Array.isArray(allCourses) && allCourses.length > 0) {
-      const findCourse = allCourses.find((course) => course?._id === id);
-      setCourseData(findCourse || null);
+  // ================= FETCH COURSE =================
+  const fetchCourseData = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + "/api/course/" + id);
+
+      if (data.success) {
+        setCourseData(data.courseData);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
-  }, [allCourses, id]);
+  };
+
+  useEffect(() => {
+    fetchCourseData();
+  }, []);
+
+  // ================= CHECK ENROLL =================
+  useEffect(() => {
+    if (userData && courseData) {
+      setIsAlreadyEnrolled(userData.enrolledCourses?.includes(courseData._id));
+    }
+  }, [userData, courseData]);
 
   if (!courseData) return <Loading />;
 
@@ -44,6 +67,40 @@ const CourseDetails = () => {
   const finalPrice =
     courseData.coursePrice -
     (courseData.discount * courseData.coursePrice) / 100;
+
+  // ================= ENROLL =================
+  const enrollCourse = async () => {
+    try {
+      if (!userData) {
+        return toast.warn("Login to Enroll");
+      }
+
+      if (isAlreadyEnrolled) {
+        return toast.warn("Already Enrolled");
+      }
+
+      const token = await getToken();
+
+      const { data } = await axios.post(
+        backendUrl + "/api/user/purchase",
+        { courseId: courseData._id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (data.success && data.session_url) {
+        // Redirect user to Stripe-hosted Checkout page
+        window.location.href = data.session_url;
+      } else {
+        toast.error(data.message || "Unable to start checkout");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="relative bg-gray-50 min-h-screen">
@@ -125,7 +182,7 @@ const CourseDetails = () => {
                       </div>
 
                       <p className="text-sm text-gray-500">
-                        {chapter?.chapterContent?.length || 0} lectures •{" "}
+                        {chapter?.chapterContent?.length} lectures •{" "}
                         {calculateChapterTime(chapter)}
                       </p>
                     </div>
@@ -166,7 +223,9 @@ const CourseDetails = () => {
                             <p className="text-sm text-gray-500">
                               {humanizeDuration(
                                 (lecture?.lectureDuration || 0) * 60 * 1000,
-                                { units: ["h", "m"] }
+                                {
+                                  units: ["h", "m"],
+                                },
                               )}
                             </p>
                           </li>
@@ -247,7 +306,15 @@ const CourseDetails = () => {
                 </div>
 
                 {/* BUTTON */}
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold">
+                <button
+                  onClick={enrollCourse}
+                  className={`w-full py-3 rounded-xl font-semibold
+                  ${
+                    isAlreadyEnrolled
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                  }`}
+                >
                   {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
                 </button>
               </div>

@@ -7,6 +7,8 @@ import CourseList from "./pages/student/CourseList";
 import CourseDetails from "./pages/student/CourseDetails";
 import MyEnrollments from "./pages/student/MyEnrollments";
 import Player from "./pages/student/Player";
+import PaymentSuccess from "./pages/student/PaymentSuccess";
+import PaymentCancel from "./pages/student/PaymentCancel";
 import "quill/dist/quill.snow.css";
 
 // Components
@@ -50,6 +52,7 @@ const App = () => {
         <Route path="/course-list" element={<CourseList />} />
         <Route path="/course-list/:input" element={<CourseList />} />
 
+        {/* IMPORTANT FIX */}
         <Route path="/course-details/:id" element={<CourseDetails />} />
 
         {/* BLOCK OLD ROUTE */}
@@ -61,6 +64,8 @@ const App = () => {
         <Route path="/my-enrollments" element={<MyEnrollments />} />
         <Route path="/player/:courseId" element={<Player />} />
         <Route path="/loading/:path" element={<Loading />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
 
         {/* EDUCATOR ROUTES */}
         <Route path="/educator" element={<Educator />}>
