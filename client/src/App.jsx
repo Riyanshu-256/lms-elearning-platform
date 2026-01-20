@@ -46,13 +46,13 @@ const App = () => {
       {!isEducatorRoute && <Navbar />}
 
       <Routes>
-        {/* STUDENT ROUTES */}
+        {/* ================= STUDENT ROUTES ================= */}
         <Route path="/" element={<Home />} />
 
         <Route path="/course-list" element={<CourseList />} />
         <Route path="/course-list/:input" element={<CourseList />} />
 
-        {/* IMPORTANT FIX */}
+        {/* FIXED ROUTE */}
         <Route path="/course-details/:id" element={<CourseDetails />} />
 
         {/* BLOCK OLD ROUTE */}
@@ -67,11 +67,9 @@ const App = () => {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-cancel" element={<PaymentCancel />} />
 
-        {/* EDUCATOR ROUTES */}
+        {/* ================= EDUCATOR ROUTES ================= */}
         <Route path="/educator" element={<Educator />}>
-          {/* DEFAULT DASHBOARD */}
           <Route index element={<Dashboard />} />
-
           <Route path="add-course" element={<AddCourse />} />
           <Route path="my-courses" element={<MyCourse />} />
           <Route path="students-enrolled" element={<StudentsEnrolled />} />
