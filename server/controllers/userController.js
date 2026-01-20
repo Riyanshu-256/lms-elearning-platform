@@ -209,7 +209,7 @@ export const getUserCourseProgress = async (req, res) => {
   }
 };
 
-//=========================== Add User Rating to Course ========================
+//========================== Add User Rating to Course ========================
 export const addUserRating = async (req, res) => {
   try {
     const userId = req.auth.userId;
