@@ -124,7 +124,8 @@ export const purchaseCourse = async (req, res) => {
 
     res.json({
       success: true,
-      url: session.url,
+      // Frontend expects `session_url` and will redirect the user to this Stripe Checkout URL
+      session_url: session.url,
     });
   } catch (error) {
     console.error("Stripe Error:", error);
