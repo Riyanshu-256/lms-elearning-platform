@@ -28,7 +28,7 @@ app.use(clerkMiddleware());
 
 // ================= ROUTES =================
 app.get("/", (req, res) => {
-  res.send("API Working 🚀");
+  res.send("API Working");
 });
 
 // Clerk Webhook

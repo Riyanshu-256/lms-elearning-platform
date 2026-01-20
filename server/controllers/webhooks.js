@@ -13,7 +13,7 @@ export const clerkWebhooks = async (req, res) => {
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
     const wh = new Webhook(WEBHOOK_SECRET);
 
-    // ⚠️ IMPORTANT: raw string body required
+    // IMPORTANT: raw string body required
     const payload = JSON.stringify(req.body);
 
     const headers = {
@@ -77,8 +77,7 @@ export const stripeWebhooks = async (req, res) => {
 
   try {
     switch (event.type) {
-
-      // ✅ PAYMENT SUCCESS
+      // PAYMENT SUCCESS
       case "checkout.session.completed": {
         const session = event.data.object;
 
@@ -100,11 +99,11 @@ export const stripeWebhooks = async (req, res) => {
         userData.enrolledCourses.push(courseData._id);
         await userData.save();
 
-        console.log("✅ Payment Success");
+        console.log("Payment Success");
         break;
       }
 
-      // ❌ PAYMENT FAILED
+      // PAYMENT FAILED
       case "checkout.session.async_payment_failed": {
         const session = event.data.object;
 
@@ -117,7 +116,7 @@ export const stripeWebhooks = async (req, res) => {
           await purchaseData.save();
         }
 
-        console.log("❌ Payment Failed");
+        console.log("Payment Failed");
         break;
       }
 

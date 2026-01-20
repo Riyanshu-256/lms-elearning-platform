@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import User from "../models/User.js";
 import Purchase from "../models/Purchase.js";
 import Course from "../models/Course.js";
+import { CourseProgress } from "../models/CourseProgress.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -9,6 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const getUserData = async (req, res) => {
   try {
     const { userId } = req.auth();
+
     const user = await User.findById(userId);
 
     if (!user) {
@@ -129,6 +131,80 @@ export const purchaseCourse = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Payment failed",
+    });
+  }
+};
+
+// ================= UPDATE USER COURSE PROGRESS =================
+export const updateUserCourseProgress = async (req, res) => {
+  try {
+    const userId = req.auth().userId;
+    const { courseId, lectureId } = req.body;
+
+    if (!courseId || !lectureId) {
+      return res.status(400).json({
+        success: false,
+        message: "Course ID and Lecture ID required",
+      });
+    }
+
+    const progressData = await CourseProgress.findOne({
+      userId,
+      courseId,
+    });
+
+    // If progress exists
+    if (progressData) {
+      if (progressData.lectureCompleted.includes(lectureId)) {
+        return res.json({
+          success: true,
+          message: "Lecture already completed",
+        });
+      }
+
+      progressData.lectureCompleted.push(lectureId);
+      await progressData.save();
+    }
+    // If progress not exists
+    else {
+      await CourseProgress.create({
+        userId,
+        courseId,
+        lectureCompleted: [lectureId],
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Progress updated",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ================= GET USER COURSE PROGRESS =================
+export const getUserCourseProgress = async (req, res) => {
+  try {
+    const userId = req.auth().userId;
+    const { courseId } = req.body;
+
+    const progressData = await CourseProgress.findOne({
+      userId,
+      courseId,
+    });
+
+    res.json({
+      success: true,
+      progressData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
