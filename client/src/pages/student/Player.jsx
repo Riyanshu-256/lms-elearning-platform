@@ -6,74 +6,188 @@ import humanizeDuration from "humanize-duration";
 import { assets } from "../../assets/assets";
 import Footer from "../../components/student/Footer";
 import Rating from "../../components/student/Rating";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Loading from "../../components/student/Loading";
 
 const Player = () => {
-  const { enrolledCourses, calculateChapterTime } = useContext(AppContext);
+  const {
+    enrolledCourses,
+    calculateChapterTime,
+    backendUrl,
+    getToken,
+    userData,
+    fetchUserEnrolledCourses,
+  } = useContext(AppContext);
+
   const { courseId } = useParams();
 
   const [courseData, setCourseData] = useState(null);
-  const [openIndex, setOpenIndex] = useState(0);
+  const [openSections, setOpenSections] = useState({});
   const [playerData, setPlayerData] = useState(null);
+  const [progressData, setProgressData] = useState(null);
+  const [initialRating, setInitialRating] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // ================= GET COURSE DATA =================
+  const getCourseData = () => {
+    const course = enrolledCourses.find((item) => item._id === courseId);
+
+    if (!course) return;
+
+    setCourseData(course);
+
+    const myRating = course.courseRatings?.find(
+      (r) => r.userId === userData?._id,
+    );
+
+    if (myRating) {
+      setInitialRating(myRating.rating);
+    }
+  };
+
+  // ================= TOGGLE SECTION =================
+  const toggleSection = (index) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  // ================= GET COURSE PROGRESS =================
+  const getCourseProgress = async () => {
+    try {
+      const token = await getToken();
+
+      const { data } = await axios.post(
+        backendUrl + "/api/user/get-course-progress",
+        { courseId },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (data.success) {
+        setProgressData(data.progressData);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // ================= MARK COMPLETE =================
+  const markLectureAsCompleted = async (lectureId) => {
+    try {
+      const token = await getToken();
+
+      const { data } = await axios.post(
+        backendUrl + "/api/user/update-course-progress",
+        { courseId, lectureId },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getCourseProgress();
+        setCompleted(true);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // ================= HANDLE RATING =================
+  const handleRate = async (rating) => {
+    try {
+      const token = await getToken();
+
+      const { data } = await axios.post(
+        backendUrl + "/api/user/add-rating",
+        { courseId, rating },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        fetchUserEnrolledCourses();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // ================= LOAD DATA =================
+  useEffect(() => {
+    if (enrolledCourses.length > 0 && userData) {
+      getCourseData();
+      setLoading(false);
+    }
+  }, [enrolledCourses, userData]);
 
   useEffect(() => {
-    const course = enrolledCourses.find((c) => c._id === courseId);
-    setCourseData(course);
-  }, [courseId, enrolledCourses]);
+    getCourseProgress();
+  }, []);
 
-  if (!courseData) return null;
+  // ================= LOADER =================
+  if (loading || !courseData) {
+    return <Loading />;
+  }
 
   return (
     <>
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid md:grid-cols-2 gap-12">
-          {/* LEFT COLUMN */}
+          {/* LEFT */}
           <div className="space-y-8">
             <h2 className="text-2xl font-bold text-gray-800">
               Course Structure
             </h2>
 
-            <div className="space-y-4">
-              {courseData.courseContent.map((chapter, index) => (
+            {courseData.courseContent.map((chapter, index) => (
+              <div
+                key={index}
+                className="border border-gray-200 rounded-xl bg-white mb-3"
+              >
+                {/* HEADER */}
                 <div
-                  key={index}
-                  className="bg-white border rounded-xl shadow-sm overflow-hidden transition hover:shadow-md"
+                  onClick={() => toggleSection(index)}
+                  className="flex justify-between items-center px-5 py-4 cursor-pointer"
                 >
-                  {/* Chapter Header */}
-                  <div
-                    onClick={() =>
-                      setOpenIndex(openIndex === index ? null : index)
-                    }
-                    className="flex justify-between items-center px-5 py-4 cursor-pointer hover:bg-gray-50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={assets.down_arrow_icon}
-                        className={`w-4 transition-transform duration-300 ${
-                          openIndex === index ? "rotate-180" : ""
-                        }`}
-                        alt=""
-                      />
-                      <p className="font-semibold text-gray-800">
-                        {chapter.chapterTitle}
-                      </p>
-                    </div>
-
-                    <p className="text-sm text-gray-500">
-                      {chapter.chapterContent.length} lectures •{" "}
-                      {calculateChapterTime(chapter)}
-                    </p>
+                  <div className="flex gap-3 items-center">
+                    <img
+                      src={assets.down_arrow_icon}
+                      className={`w-4 transition ${
+                        openSections[index] ? "rotate-180" : ""
+                      }`}
+                      alt=""
+                    />
+                    <p className="font-semibold">{chapter.chapterTitle}</p>
                   </div>
 
-                  {/* Lectures */}
-                  {openIndex === index && (
-                    <ul className="px-5 py-4 space-y-4 border-t bg-gray-50">
-                      {chapter.chapterContent.map((lecture, i) => (
-                        <li
+                  <p className="text-sm text-gray-500">
+                    {chapter.chapterContent.length} lectures •{" "}
+                    {calculateChapterTime(chapter)}
+                  </p>
+                </div>
+
+                {/* LECTURES */}
+                {openSections[index] && (
+                  <div className="px-5 py-4 border-t bg-gray-50 space-y-4">
+                    {chapter.chapterContent.map((lecture, i) => {
+                      const isWatched =
+                        progressData?.lectureCompleted?.includes(lecture._id);
+
+                      return (
+                        <div
                           key={i}
                           className="flex justify-between items-center"
                         >
-                          <div className="flex gap-3 items-start">
+                          <div className="flex gap-3">
                             <img
                               src={assets.play_icon}
                               className="w-4 mt-1"
@@ -81,19 +195,20 @@ const Player = () => {
                             />
 
                             <div>
-                              <p className="text-sm font-medium text-gray-700">
+                              <p className="text-sm font-medium">
                                 {lecture.lectureTitle}
                               </p>
 
                               <button
                                 onClick={() => {
-                                  setCompleted(false);
+                                  setCompleted(isWatched);
                                   setPlayerData({
                                     videoId: lecture.lectureUrl
                                       .split("/")
                                       .pop(),
                                     title: lecture.lectureTitle,
                                     chapter: chapter.chapterTitle,
+                                    lectureId: lecture._id,
                                   });
                                 }}
                                 className="text-xs text-blue-600 hover:underline"
@@ -103,42 +218,30 @@ const Player = () => {
                             </div>
                           </div>
 
-                          <p className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500">
                             {humanizeDuration(
                               lecture.lectureDuration * 60 * 1000,
-                              { units: ["h", "m"] }
+                              { units: ["h", "m"] },
                             )}
-                          </p>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* RATING CARD */}
-            <div className="bg-white p-6 rounded-xl shadow-gray-400 space-y-3">
-              <h1 className="text-lg font-semibold text-gray-800">
-                ⭐ Rate this Course
-              </h1>
-
-              <p className="text-sm text-gray-500">
-                Share your experience to help others choose better.
-              </p>
-
-              <div className="flex items-center gap-3">
-                <Rating onRate={(value) => console.log("Rated:", value)} />
-                <span className="text-xs text-gray-400">
-                  Click stars to rate
-                </span>
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
+            ))}
+
+            {/* RATING */}
+            <div className="bg-white p-6 rounded-xl shadow space-y-3">
+              <h2 className="font-semibold">⭐ Rate this Course</h2>
+              <Rating initialRating={initialRating} onRate={handleRate} />
             </div>
           </div>
 
-          {/* RIGHT COLUMN */}
+          {/* RIGHT */}
           <div className="sticky top-24">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-white rounded-xl shadow overflow-hidden">
               {/* VIDEO */}
               <div className="relative aspect-video bg-black">
                 {playerData ? (
@@ -154,53 +257,36 @@ const Player = () => {
                       },
                     }}
                     className="absolute inset-0"
-                    iframeClassName="w-full h-full"
                   />
                 ) : (
                   <img
                     src={courseData.courseThumbnail}
-                    alt="course"
                     className="w-full h-full object-cover"
+                    alt=""
                   />
-                )}
-
-                {/* Play Overlay */}
-                {!playerData && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-white/90 p-5 rounded-full shadow-lg animate-pulse">
-                      ▶
-                    </div>
-                  </div>
                 )}
               </div>
 
-              {/* CONTENT */}
+              {/* DETAILS */}
               <div className="p-6 space-y-4">
-                {/* Lecture Title */}
-                <div>
-                  <p className="text-xs text-gray-500 uppercase">Now Playing</p>
-                  <h3 className="font-semibold text-gray-800">
-                    {playerData
-                      ? `${playerData.chapter} - ${playerData.title}`
-                      : "Select a lecture to start"}
-                  </h3>
-                </div>
+                <h3 className="font-semibold">
+                  {playerData
+                    ? `${playerData.chapter} - ${playerData.title}`
+                    : "Select a lecture to start"}
+                </h3>
 
-                {/* ACTIONS */}
                 {playerData && (
-                  <div className="flex justify-between items-center pt-2">
-                    <button
-                      onClick={() => setCompleted(!completed)}
-                      className={`px-5 py-2 rounded-lg text-sm font-medium transition-all
-                      ${
-                        completed
-                          ? "bg-green-100 text-green-600"
-                          : "bg-blue-600 text-white hover:bg-blue-700"
-                      }`}
-                    >
-                      {completed ? "Completed ✓" : "Mark Complete"}
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => markLectureAsCompleted(playerData.lectureId)}
+                    className={`px-5 py-2 rounded-lg text-sm
+                    ${
+                      completed
+                        ? "bg-green-100 text-green-600"
+                        : "bg-blue-600 text-white"
+                    }`}
+                  >
+                    {completed ? "Completed ✓" : "Mark Complete"}
+                  </button>
                 )}
               </div>
             </div>

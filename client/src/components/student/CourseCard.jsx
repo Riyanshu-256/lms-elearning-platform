@@ -13,7 +13,7 @@ const CourseCard = ({ course }) => {
 
   return (
     <Link to={`/course/${course._id}`} className="group block w-full">
-      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 w-96 h-96 shadow-sm hover:shadow-lg transition-all duration-300">
         {/* Thumbnail */}
         <div className="relative w-full h-44 sm:h-44 md:h-52 overflow-hidden">
           <img
@@ -23,7 +23,7 @@ const CourseCard = ({ course }) => {
             onError={(e) => {
               e.target.src = assets.placeholder;
             }}
-            className="w-90 h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
 
           {course.discount > 0 && (

@@ -1,34 +1,62 @@
 import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
 import { AppContext } from "../../context/AppContext";
-import { dummyDashboardData, assets } from "../../assets/assets";
+import { assets } from "../../assets/assets";
 import Loading from "../../components/student/Loading";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
-  // Craete a variable to store the data of dashboardData
+  const { currency, backendUrl, isEducator, getToken } = useContext(AppContext);
+
   const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // import currency from AppContext
-  const { currency } = useContext(AppContext);
+  // ================= FETCH DASHBOARD DATA =================
+  const fetchDashboardData = async () => {
+    try {
+      const token = await getToken();
 
-  // Fetch the data of dashboardData
+      const { data } = await axios.get(backendUrl + "/api/educator/dashboard", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (data.success) {
+        setDashboardData(data.dashboardData);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setDashboardData(dummyDashboardData);
-  }, []);
+    if (isEducator) {
+      fetchDashboardData();
+    }
+  }, [isEducator]);
 
-  if (!dashboardData) return <Loading />;
+  // ================= LOADER =================
+  if (loading || !dashboardData) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen p-6 md:p-10 space-y-10 bg-gray-50">
       {/* HEADER */}
-      <div className="flex justify-between items-center">
+      <div>
         <h1 className="text-2xl font-semibold text-gray-800">
           Educator Dashboard
         </h1>
+        <p className="text-sm text-gray-500">Overview of your performance</p>
       </div>
 
       {/* STATS */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Enrollments */}
         <StatCard
           icon={assets.patients_icon}
           value={dashboardData.enrolledStudentsData.length}
@@ -36,7 +64,6 @@ const Dashboard = () => {
           color="from-blue-500 to-indigo-500"
         />
 
-        {/* Courses */}
         <StatCard
           icon={assets.appointments_icon}
           value={dashboardData.totalCourses}
@@ -44,7 +71,6 @@ const Dashboard = () => {
           color="from-emerald-500 to-teal-500"
         />
 
-        {/* Earnings */}
         <StatCard
           icon={assets.earning_icon}
           value={`${currency}${dashboardData.totalEarnings}`}
@@ -72,6 +98,14 @@ const Dashboard = () => {
             </thead>
 
             <tbody>
+              {dashboardData.enrolledStudentsData.length === 0 && (
+                <tr>
+                  <td colSpan="3" className="text-center py-10 text-gray-400">
+                    No enrollments found
+                  </td>
+                </tr>
+              )}
+
               {dashboardData.enrolledStudentsData.map((item, index) => (
                 <tr
                   key={index}
@@ -85,7 +119,7 @@ const Dashboard = () => {
                     <img
                       src={item.student.imageUrl}
                       className="w-10 h-10 rounded-full ring-2 ring-blue-500"
-                      alt=""
+                      alt="student"
                     />
                     <p className="font-medium text-gray-700">
                       {item.student.name}
@@ -105,7 +139,8 @@ const Dashboard = () => {
   );
 };
 
-/* Reusable Card */
+/* ================= REUSABLE CARD ================= */
+
 const StatCard = ({ icon, value, label, color }) => (
   <div
     className={`bg-linear-to-r ${color} 

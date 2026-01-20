@@ -69,7 +69,7 @@ const CourseList = () => {
             <img
               src={assets.cross_icon}
               alt="clear"
-              className="cursor-pointer w-4"
+              className="w-90 h-full object-cover group-hover:scale-105 transition-transform duration-300"
               onClick={() => navigate("/course-list")}
             />
           </div>
