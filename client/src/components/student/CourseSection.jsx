@@ -6,6 +6,9 @@ import CourseCard from "./CourseCard";
 const CoursesSection = () => {
   const { allCourses } = useContext(AppContext);
 
+  // Show latest 4 courses (so newly published ones appear on the homepage)
+  const latestCourses = [...allCourses].slice(-4).reverse();
+
   return (
     <section className="py-20 md:px-40 px-8 bg-gray-50">
       {/* Header */}
@@ -22,7 +25,7 @@ const CoursesSection = () => {
 
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mt-14">
-        {allCourses.slice(0, 4).map((course, index) => (
+        {latestCourses.map((course, index) => (
           <CourseCard key={index} course={course} />
         ))}
       </div>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-const Rating = ({ initialRating = 0, onRate }) => {
+const Rating = ({ initialRating = 0, onRate, disabled = false }) => {
   const [rating, setRating] = useState(initialRating);
 
   const handleRating = (value) => {
+    if (disabled) return;
     setRating(value);
     onRate?.(value); // clean optional call
   };
@@ -20,8 +21,11 @@ const Rating = ({ initialRating = 0, onRate }) => {
         return (
           <span
             key={index}
-            className={`text-xl sm:text-2xl cursor-pointer transition-colors
-              ${starValue <= rating ? "text-yellow-500" : "text-gray-400"}`}
+            className={`text-xl sm:text-2xl ${
+              disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+            } transition-colors ${
+              starValue <= rating ? "text-yellow-500" : "text-gray-400"
+            }`}
             onClick={() => handleRating(starValue)}
           >
             &#9733;

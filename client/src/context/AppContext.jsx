@@ -30,8 +30,6 @@ export const AppContextProvider = ({ children }) => {
 
       if (data.success) {
         setAllCourses(data.courses || []);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -49,16 +47,17 @@ export const AppContextProvider = ({ children }) => {
 
       const token = await getToken();
 
-      const { data } = await axios.get(`${backendUrl}/api/user/data`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const { data } = await axios.get(
+        `${backendUrl}/api/user/profile`, // ✅ FIXED ROUTE
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       if (data.success) {
         setUserData(data.user);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -71,18 +70,16 @@ export const AppContextProvider = ({ children }) => {
       const token = await getToken();
 
       const { data } = await axios.get(
-        `${backendUrl}/api/user/enrolled-courses`,
+        `${backendUrl}/api/user/courses`, // ✅ FIXED ROUTE
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (data.success) {
         setEnrolledCourses(data.enrolledCourses?.reverse() || []);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -120,7 +117,7 @@ export const AppContextProvider = ({ children }) => {
     let time = 0;
 
     chapter?.chapterContent?.forEach(
-      (lecture) => (time += lecture.lectureDuration || 0)
+      (lecture) => (time += lecture.lectureDuration || 0),
     );
 
     return humanizeDuration(time * 60 * 1000, {
@@ -135,8 +132,8 @@ export const AppContextProvider = ({ children }) => {
 
     course?.courseContent?.forEach((chapter) =>
       chapter?.chapterContent?.forEach(
-        (lecture) => (time += lecture.lectureDuration || 0)
-      )
+        (lecture) => (time += lecture.lectureDuration || 0),
+      ),
     );
 
     return humanizeDuration(time * 60 * 1000, {

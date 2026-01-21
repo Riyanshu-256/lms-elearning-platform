@@ -1,6 +1,6 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import Loading from "../../components/student/Loading";
 import { assets } from "../../assets/assets";
 import humanizeDuration from "humanize-duration";
@@ -13,6 +13,37 @@ import { useAuth } from "@clerk/clerk-react";
 const CourseDetails = () => {
   const { id } = useParams();
   const { getToken } = useAuth();
+  const navigate = useNavigate();
+
+  // Extract YouTube video ID from different URL formats (watch, share, embed)
+  const extractYoutubeId = (url) => {
+    if (!url) return null;
+
+    // If user saved plain ID instead of full URL
+    if (!url.startsWith("http")) return url;
+
+    try {
+      const u = new URL(url);
+
+      // Short URL: https://youtu.be/VIDEO_ID
+      if (u.hostname.includes("youtu.be")) {
+        return u.pathname.replace("/", "");
+      }
+
+      // Standard watch URL: https://www.youtube.com/watch?v=VIDEO_ID
+      const vParam = u.searchParams.get("v");
+      if (vParam) return vParam;
+
+      // Embed or other formats: take last non-empty path segment
+      const segments = u.pathname.split("/").filter(Boolean);
+      return segments[segments.length - 1] || null;
+    } catch (e) {
+      // Fallback: last path segment without query string
+      const clean = url.split("?")[0];
+      const parts = clean.split("/");
+      return parts[parts.length - 1];
+    }
+  };
 
   const {
     calculateRating,
@@ -22,6 +53,8 @@ const CourseDetails = () => {
     currency,
     backendUrl,
     userData,
+    enrolledCourses,
+    fetchUserEnrolledCourses,
   } = useContext(AppContext);
 
   const [courseData, setCourseData] = useState(null);
@@ -48,12 +81,52 @@ const CourseDetails = () => {
     fetchCourseData();
   }, []);
 
+  // Always refresh enrolled courses when user is known and page mounts
+  useEffect(() => {
+    if (userData) {
+      fetchUserEnrolledCourses();
+    }
+  }, [userData, fetchUserEnrolledCourses]);
+
   // ================= CHECK ENROLL =================
   useEffect(() => {
-    if (userData && courseData) {
-      setIsAlreadyEnrolled(userData.enrolledCourses?.includes(courseData._id));
+    if (enrolledCourses && courseData) {
+      setIsAlreadyEnrolled(
+        enrolledCourses.some((course) => course._id === courseData._id),
+      );
     }
-  }, [userData, courseData]);
+  }, [enrolledCourses, courseData]);
+
+  // ================= COURSE STATUS =================
+  const fetchCourseStatus = useCallback(async () => {
+    try {
+      if (!userData) {
+        setIsAlreadyEnrolled(false);
+        return;
+      }
+
+      const token = await getToken();
+
+      const { data } = await axios.get(
+        `${backendUrl}/api/user/course-status/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (data.success) {
+        setIsAlreadyEnrolled(data.isEnrolled);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  }, [backendUrl, getToken, id, userData]);
+
+  useEffect(() => {
+    fetchCourseStatus();
+  }, [fetchCourseStatus]);
 
   if (!courseData) return <Loading />;
 
@@ -207,9 +280,9 @@ const CourseDetails = () => {
                                   <button
                                     onClick={() =>
                                       setPlayerData({
-                                        videoId: lecture.lectureUrl
-                                          .split("/")
-                                          .pop(),
+                                        videoId: extractYoutubeId(
+                                          lecture.lectureUrl,
+                                        ),
                                       })
                                     }
                                     className="text-xs text-green-600 hover:underline"
@@ -306,17 +379,21 @@ const CourseDetails = () => {
                 </div>
 
                 {/* BUTTON */}
-                <button
-                  onClick={enrollCourse}
-                  className={`w-full py-3 rounded-xl font-semibold
-                  ${
-                    isAlreadyEnrolled
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 text-white"
-                  }`}
-                >
-                  {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
-                </button>
+                {isAlreadyEnrolled ? (
+                  <button
+                    onClick={() => navigate(`/course/${courseData._id}`)}
+                    className="w-full py-3 rounded-xl font-semibold bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    Go to Course
+                  </button>
+                ) : (
+                  <button
+                    onClick={enrollCourse}
+                    className="w-full py-3 rounded-xl font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Enroll Now
+                  </button>
+                )}
               </div>
             </div>
           </div>

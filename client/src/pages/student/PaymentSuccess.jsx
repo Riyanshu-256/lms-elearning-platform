@@ -1,37 +1,60 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { AppContext } from "../../context/AppContext";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const sessionId = params.get("session_id");
+
+  const { backendUrl, getToken, fetchUserEnrolledCourses } =
+    useContext(AppContext);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const confirmPurchase = async () => {
+      try {
+        const token = await getToken();
+
+        const { data } = await axios.post(
+          `${backendUrl}/api/user/confirm-purchase`,
+          { sessionId },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+
+        if (data.success) {
+          await fetchUserEnrolledCourses();
+        } else {
+          toast.error(data.message);
+        }
+      } catch (err) {
+        toast.error(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (sessionId) confirmPurchase();
+  }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center">
-        <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-green-100 flex items-center justify-center">
-          <span className="text-3xl text-green-600">✓</span>
-        </div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-          Payment successful
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your enrollment is being processed. You can now access your course from
-          the <span className="font-medium">My Enrollments</span> page.
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="bg-white p-8 rounded-xl shadow-md text-center">
+        <h1 className="text-2xl font-semibold mb-2">Payment Successful 🎉</h1>
+
+        <p className="text-gray-600 mb-4">
+          {loading ? "Confirming enrollment..." : "Enrollment confirmed!"}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <button
-            onClick={() => navigate("/my-enrollments")}
-            className="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700"
-          >
-            Go to My Enrollments
-          </button>
-          <button
-            onClick={() => navigate("/")}
-            className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50"
-          >
-            Back to Home
-          </button>
-        </div>
+        <button
+          onClick={() => navigate("/my-enrollments")}
+          className="bg-blue-600 text-white px-5 py-2 rounded-lg"
+        >
+          Go to My Enrollments
+        </button>
       </div>
     </div>
   );

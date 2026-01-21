@@ -12,10 +12,16 @@ const CourseCard = ({ course }) => {
   ).toFixed(2);
 
   return (
-    <Link to={`/course/${course._id}`} className="group block w-full">
-      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 w-96 h-96 shadow-sm hover:shadow-lg transition-all duration-300">
+    <Link to={`/course-details/${course._id}`} className="block">
+      {/* CARD */}
+      <div
+        className="bg-white rounded-2xl overflow-hidden border 
+        border-gray-100 shadow-sm 
+        transition-all duration-300 
+        hover:shadow-xl hover:-translate-y-1"
+      >
         {/* Thumbnail */}
-        <div className="relative w-full h-44 sm:h-44 md:h-52 overflow-hidden">
+        <div className="relative w-full h-44 md:h-52 overflow-hidden">
           <img
             src={course.courseThumbnail}
             alt={course.courseTitle}
@@ -23,11 +29,16 @@ const CourseCard = ({ course }) => {
             onError={(e) => {
               e.target.src = assets.placeholder;
             }}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover"
           />
 
           {course.discount > 0 && (
-            <span className="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+            <span
+              className="absolute top-3 left-3 
+              bg-indigo-600 text-white 
+              text-xs font-semibold px-3 py-1 
+              rounded-full shadow"
+            >
               {course.discount}% OFF
             </span>
           )}
@@ -36,7 +47,10 @@ const CourseCard = ({ course }) => {
         {/* Content */}
         <div className="p-4 sm:p-5 space-y-3">
           {/* Title */}
-          <h3 className="text-sm sm:text-[15px] font-semibold text-gray-800 line-clamp-2">
+          <h3
+            className="text-sm sm:text-[15px] 
+            font-semibold text-gray-800 line-clamp-2"
+          >
             {course.courseTitle}
           </h3>
 
@@ -77,7 +91,10 @@ const CourseCard = ({ course }) => {
             </p>
 
             {course.discount > 0 && (
-              <p className="text-xs sm:text-sm text-gray-400 line-through">
+              <p
+                className="text-xs sm:text-sm 
+                text-gray-400 line-through"
+              >
                 {currency}
                 {course.coursePrice}
               </p>

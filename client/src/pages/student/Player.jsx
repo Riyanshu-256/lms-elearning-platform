@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { useParams } from "react-router-dom";
 import Youtube from "react-youtube";
@@ -22,11 +22,39 @@ const Player = () => {
 
   const { courseId } = useParams();
 
+  // Extract YouTube video ID from different URL formats (watch, share, embed)
+  const extractYoutubeId = (url) => {
+    if (!url) return null;
+    if (!url.startsWith("http")) return url;
+
+    try {
+      const u = new URL(url);
+
+      if (u.hostname.includes("youtu.be")) {
+        return u.pathname.replace("/", "");
+      }
+
+      const vParam = u.searchParams.get("v");
+      if (vParam) return vParam;
+
+      const segments = u.pathname.split("/").filter(Boolean);
+      return segments[segments.length - 1] || null;
+    } catch (e) {
+      const clean = url.split("?")[0];
+      const parts = clean.split("/");
+      return parts[parts.length - 1];
+    }
+  };
+
   const [courseData, setCourseData] = useState(null);
   const [openSections, setOpenSections] = useState({});
   const [playerData, setPlayerData] = useState(null);
   const [progressData, setProgressData] = useState(null);
   const [initialRating, setInitialRating] = useState(0);
+  const [courseStatus, setCourseStatus] = useState({
+    isEnrolled: false,
+    hasRated: false,
+  });
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -102,6 +130,16 @@ const Player = () => {
   // ================= HANDLE RATING =================
   const handleRate = async (rating) => {
     try {
+      if (!courseStatus.isEnrolled) {
+        toast.warn("Enroll in the course to rate it");
+        return;
+      }
+
+      if (courseStatus.hasRated) {
+        toast.info("You have already rated this course");
+        return;
+      }
+
       const token = await getToken();
 
       const { data } = await axios.post(
@@ -112,6 +150,8 @@ const Player = () => {
 
       if (data.success) {
         toast.success(data.message);
+        setInitialRating(rating);
+        setCourseStatus((prev) => ({ ...prev, hasRated: true }));
         fetchUserEnrolledCourses();
       } else {
         toast.error(data.message);
@@ -128,6 +168,32 @@ const Player = () => {
       setLoading(false);
     }
   }, [enrolledCourses, userData]);
+
+  // ================= COURSE STATUS =================
+  const fetchCourseStatus = useCallback(async () => {
+    try {
+      if (!userData) return;
+
+      const token = await getToken();
+      const { data } = await axios.get(
+        `${backendUrl}/api/user/course-status/${courseId}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (data.success) {
+        setCourseStatus({
+          isEnrolled: data.isEnrolled,
+          hasRated: data.hasRated,
+        });
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  }, [backendUrl, courseId, getToken, userData]);
+
+  useEffect(() => {
+    fetchCourseStatus();
+  }, [fetchCourseStatus]);
 
   useEffect(() => {
     getCourseProgress();
@@ -180,7 +246,9 @@ const Player = () => {
                   <div className="px-5 py-4 border-t bg-gray-50 space-y-4">
                     {chapter.chapterContent.map((lecture, i) => {
                       const isWatched =
-                        progressData?.lectureCompleted?.includes(lecture._id);
+                        progressData?.lectureCompleted?.includes(
+                          lecture.lectureId,
+                        );
 
                       return (
                         <div
@@ -203,12 +271,12 @@ const Player = () => {
                                 onClick={() => {
                                   setCompleted(isWatched);
                                   setPlayerData({
-                                    videoId: lecture.lectureUrl
-                                      .split("/")
-                                      .pop(),
+                                    videoId: extractYoutubeId(
+                                      lecture.lectureUrl,
+                                    ),
                                     title: lecture.lectureTitle,
                                     chapter: chapter.chapterTitle,
-                                    lectureId: lecture._id,
+                                    lectureId: lecture.lectureId,
                                   });
                                 }}
                                 className="text-xs text-blue-600 hover:underline"
@@ -235,7 +303,11 @@ const Player = () => {
             {/* RATING */}
             <div className="bg-white p-6 rounded-xl shadow space-y-3">
               <h2 className="font-semibold">⭐ Rate this Course</h2>
-              <Rating initialRating={initialRating} onRate={handleRate} />
+              <Rating
+                initialRating={initialRating}
+                onRate={handleRate}
+                disabled={!courseStatus.isEnrolled || courseStatus.hasRated}
+              />
             </div>
           </div>
 
