@@ -13,41 +13,40 @@ const app = express();
 
 // ================= ALLOWED ORIGINS =================
 const allowedOrigins = [
-  process.env.CLIENT_URL, // production frontend
-  "http://localhost:5173", // local dev
+  "https://lms-elearning-platform.vercel.app",
+  "http://localhost:5173",
 ];
 
 // ================= DATABASE =================
 await connectDB();
 await connectCloudinary();
 
-// ================= STRIPE WEBHOOK =================
-// MUST be before express.json()
-app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
-
-// ================= CORS =================
+// ================= CORS (TOP PRIORITY) =================
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: function (origin, callback) {
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("CORS not allowed"));
+        callback(new Error("CORS blocked"));
       }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
-// Handle preflight
+// REQUIRED FOR PREFLIGHT
 app.options("*", cors());
 
 // ================= BODY PARSER =================
 app.use(express.json());
+
+// ================= WEBHOOKS =================
+app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
+
+app.post("/clerk", express.raw({ type: "application/json" }), clerkWebhooks);
 
 // ================= CLERK AUTH =================
 app.use(clerkMiddleware());
@@ -57,10 +56,6 @@ app.get("/", (req, res) => {
   res.send("API Working");
 });
 
-// Clerk Webhook
-app.post("/clerk", express.raw({ type: "application/json" }), clerkWebhooks);
-
-// App Routes
 app.use("/api/educator", educatorRouter);
 app.use("/api/course", courseRouter);
 app.use("/api/user", userRouter);
