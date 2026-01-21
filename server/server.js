@@ -11,6 +11,12 @@ import userRouter from "./routes/userRoutes.js";
 
 const app = express();
 
+// ================= ALLOWED ORIGINS =================
+const allowedOrigins = [
+  process.env.CLIENT_URL, // production frontend
+  "http://localhost:5173", // local dev
+];
+
 // ================= DATABASE =================
 await connectDB();
 await connectCloudinary();
@@ -19,13 +25,28 @@ await connectCloudinary();
 // MUST be before express.json()
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 
-// ================= NORMAL MIDDLEWARE =================
+// ================= CORS =================
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+// Handle preflight
+app.options("*", cors());
+
+// ================= BODY PARSER =================
 app.use(express.json());
 
 // ================= CLERK AUTH =================
