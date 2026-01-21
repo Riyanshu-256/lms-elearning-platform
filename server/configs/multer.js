@@ -1,12 +1,30 @@
-// Import multer (tool used to upload files)
 import multer from "multer";
 
-// Tell multer to save uploaded file temporarily on server
-const storage = multer.diskStorage({});
+/* TEMP STORAGE */
+const storage = multer.diskStorage({
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
 
-// Create upload middleware
-// This helps us get the uploaded file in req.file
-const upload = multer({ storage });
+/* FILE FILTER */
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/webp"
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only image files allowed"), false);
+  }
+};
 
-// Export it so we can use in other files
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter,
+});
+
 export default upload;

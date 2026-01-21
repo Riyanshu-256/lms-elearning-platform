@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 // Lecture Schema
 const lectureSchema = new mongoose.Schema(
   {
-    // Unique ID for lecture
+    // Unique ID for lecture (used for progress tracking)
     lectureId: { type: String, required: true },
 
     // Lecture title
@@ -16,10 +16,11 @@ const lectureSchema = new mongoose.Schema(
     // Video URL
     lectureUrl: { type: String, required: true },
 
-    // Is this lecture free preview?
-    isPreview: { type: Boolean, required: true },
+    // Is this lecture free preview for non‑enrolled users?
+    // Name aligned with frontend field `isPreviewFree`
+    isPreviewFree: { type: Boolean, required: true },
 
-    // Order of lecture in chapter
+    // Order of lecture in chapter (1‑based)
     lectureOrder: { type: Number, required: true },
   },
   {

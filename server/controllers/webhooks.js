@@ -4,16 +4,14 @@ import User from "../models/User.js";
 import Purchase from "../models/Purchase.js";
 import Course from "../models/Course.js";
 
-// Stripe Init
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// ================= CLERK WEBHOOK =================
+/* ================= CLERK WEBHOOK ================= */
 export const clerkWebhooks = async (req, res) => {
   try {
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
     const wh = new Webhook(WEBHOOK_SECRET);
 
-    // IMPORTANT: raw string body required
     const payload = JSON.stringify(req.body);
 
     const headers = {
@@ -22,7 +20,6 @@ export const clerkWebhooks = async (req, res) => {
       "svix-signature": req.headers["svix-signature"],
     };
 
-    // Verify webhook
     const evt = wh.verify(payload, headers);
     const { type, data } = evt;
 
@@ -60,7 +57,7 @@ export const clerkWebhooks = async (req, res) => {
   }
 };
 
-// ================= STRIPE WEBHOOK =================
+/* ================= STRIPE WEBHOOK ================= */
 export const stripeWebhooks = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   let event;
@@ -69,7 +66,7 @@ export const stripeWebhooks = async (req, res) => {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -77,44 +74,39 @@ export const stripeWebhooks = async (req, res) => {
 
   try {
     switch (event.type) {
-      // PAYMENT SUCCESS
       case "checkout.session.completed": {
         const session = event.data.object;
 
-        const purchaseData = await Purchase.findOne({
+        const purchase = await Purchase.findOne({
           sessionId: session.id,
         });
 
-        if (!purchaseData) break;
+        if (!purchase) break;
 
-        purchaseData.status = "completed";
-        await purchaseData.save();
+        purchase.status = "completed";
+        await purchase.save();
 
-        const userData = await User.findById(purchaseData.userId);
-        const courseData = await Course.findById(purchaseData.courseId);
+        await Course.updateOne(
+          { _id: purchase.courseId },
+          { $addToSet: { enrolledStudents: purchase.userId } },
+        );
 
-        courseData.enrolledStudents.push(userData._id);
-        await courseData.save();
-
-        userData.enrolledCourses.push(courseData._id);
-        await userData.save();
+        await User.updateOne(
+          { _id: purchase.userId },
+          { $addToSet: { enrolledCourses: purchase.courseId } },
+        );
 
         console.log("Payment Success");
         break;
       }
 
-      // PAYMENT FAILED
       case "checkout.session.async_payment_failed": {
         const session = event.data.object;
 
-        const purchaseData = await Purchase.findOne({
-          sessionId: session.id,
-        });
-
-        if (purchaseData) {
-          purchaseData.status = "failed";
-          await purchaseData.save();
-        }
+        await Purchase.updateOne(
+          { sessionId: session.id },
+          { status: "failed" },
+        );
 
         console.log("Payment Failed");
         break;

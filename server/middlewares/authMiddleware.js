@@ -2,8 +2,6 @@ import { verifyToken } from "@clerk/backend";
 
 export const protectEducator = async (req, res, next) => {
   try {
-    console.log("=== AUTH DEBUG ===");
-
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer")) {
@@ -19,8 +17,6 @@ export const protectEducator = async (req, res, next) => {
     const payload = await verifyToken(token, {
       secretKey: process.env.CLERK_SECRET_KEY,
     });
-
-    console.log("TOKEN PAYLOAD:", payload);
 
     const userId = payload.sub;
 
