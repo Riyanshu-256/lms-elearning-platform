@@ -96,21 +96,25 @@ This LMS platform is a production-ready application that demonstrates modern ful
 ### Frontend (React + Vite)
 
 #### Core Technologies
+
 - **React 19.2.0** - Modern component-based UI library
 - **Vite 7.2.4** - Lightning-fast build tool and dev server
 - **React Router DOM 7.12.0** - Declarative routing for React
 
 #### UI & Styling
+
 - **Tailwind CSS 4.1.18** - Utility-first CSS framework
 - **Framer Motion 12.25.0** - Production-ready motion library
 - **Lucide React 0.562.0** - Beautiful icon library
 
 #### Authentication & Content
+
 - **Clerk React 5.59.3** - Complete user management solution
 - **Quill 2.0.3** - Powerful rich text editor
 - **React YouTube 10.1.0** - YouTube player integration
 
 #### Utilities
+
 - **Axios 1.13.2** - HTTP client for API requests
 - **Humanize Duration 3.33.2** - Duration formatting
 - **React Simple Star Rating 5.1.7** - Rating component
@@ -121,25 +125,30 @@ This LMS platform is a production-ready application that demonstrates modern ful
 - **React Toastify 11.0.5** - Advanced notifications
 
 #### Development Tools
+
 - **ESLint 9.39.1** - Code quality enforcement
 - **TypeScript Types** - Type safety for React ecosystem
 
 ### Backend (Express + MongoDB)
 
 #### Core Technologies
+
 - **Express 4.19.2** - Fast, unopinionated web framework
 - **MongoDB 9.1.3** - NoSQL document database
 - **Mongoose** - Elegant MongoDB object modeling
 
 #### Authentication & Security
+
 - **Clerk Express 1.7.62** - Server-side authentication
 - **Svix 1.42.0** - Webhook verification
 
 #### Payments & Media
+
 - **Stripe 20.1.2** - Payment processing
 - **Cloudinary 2.8.0** - Media management and optimization
 
 #### Utilities
+
 - **CORS 2.8.5** - Cross-origin resource sharing
 - **Dotenv 17.2.3** - Environment variable management
 - **Multer 2.0.2** - File upload handling
@@ -246,12 +255,14 @@ LMS-PROJECT/
 ### Quick Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd LMS-PROJECT
    ```
 
 2. **Install dependencies**
+
    ```bash
    # Install frontend dependencies
    cd client && npm install
@@ -265,6 +276,7 @@ LMS-PROJECT/
    - Fill in your API keys and configuration
 
 4. **Start the development servers**
+
    ```bash
    # Start backend (from server/)
    npm run dev
@@ -338,6 +350,7 @@ CLOUDINARY_SECRET_KEY=your_secret_key
    - Get cloud name and API credentials
 
 5. **Development Workflow**
+
    ```bash
    # Backend development
    cd server && npm run dev
@@ -352,38 +365,45 @@ CLOUDINARY_SECRET_KEY=your_secret_key
 ## 📡 API Documentation
 
 ### Base URL
+
 ```
 http://localhost:5000/api
 ```
 
 ### Authentication
+
 All protected routes require Clerk JWT tokens.
 
 ### Key Endpoints
 
 #### User Routes (`/api/user`)
+
 - `GET /profile` - Get user profile
 - `POST /webhook` - Clerk webhook handler
 
 #### Course Routes (`/api/course`)
+
 - `GET /list` - Get all courses
 - `GET /:id` - Get course details
 - `POST /purchase` - Purchase course
 - `POST /verify-payment` - Verify payment
 
 #### Educator Routes (`/api/educator`)
+
 - `POST /add-course` - Create new course
 - `GET /courses` - Get educator's courses
 - `GET /dashboard` - Get dashboard stats
 - `GET /students` - Get enrolled students
 
 #### Webhooks
+
 - `POST /clerk` - Clerk user events
 - `POST /stripe` - Stripe payment events
 
 ## 🗄 Database Models
 
 ### User Model
+
 ```javascript
 {
   _id: ObjectId,
@@ -398,6 +418,7 @@ All protected routes require Clerk JWT tokens.
 ```
 
 ### Course Model
+
 ```javascript
 {
   courseTitle: String,
@@ -416,6 +437,7 @@ All protected routes require Clerk JWT tokens.
 ```
 
 ### Purchase Model
+
 ```javascript
 {
   courseId: String,
@@ -427,6 +449,7 @@ All protected routes require Clerk JWT tokens.
 ```
 
 ### CourseProgress Model
+
 ```javascript
 {
   userId: String,
@@ -442,6 +465,7 @@ All protected routes require Clerk JWT tokens.
 ### Frontend Dependencies (client/package.json)
 
 #### Production
+
 - **React Ecosystem**: react, react-dom, react-router-dom
 - **Styling**: tailwindcss, framer-motion, lucide-react
 - **Authentication**: @clerk/clerk-react
@@ -450,6 +474,7 @@ All protected routes require Clerk JWT tokens.
 - **Notifications**: react-hot-toast, react-toastify
 
 #### Development
+
 - **Build Tools**: @vitejs/plugin-react, vite
 - **Linting**: eslint, @eslint/js
 - **Types**: @types/react, @types/react-dom
@@ -457,6 +482,7 @@ All protected routes require Clerk JWT tokens.
 ### Backend Dependencies (server/package.json)
 
 #### Production
+
 - **Web Framework**: express
 - **Database**: mongoose
 - **Authentication**: @clerk/express, svix
@@ -465,11 +491,13 @@ All protected routes require Clerk JWT tokens.
 - **Utilities**: cors, dotenv, multer
 
 #### Development
+
 - **Development**: nodemon
 
 ## 🚀 Deployment
 
 ### Frontend Deployment (Vercel)
+
 ```bash
 cd client
 npm run build
@@ -477,6 +505,7 @@ npm run build
 ```
 
 ### Backend Deployment (Vercel/Railway)
+
 ```bash
 cd server
 # Configure environment variables
@@ -484,6 +513,7 @@ cd server
 ```
 
 ### Production Considerations
+
 - Set `NODE_ENV=production`
 - Configure production database
 - Set up proper CORS origins
@@ -499,6 +529,7 @@ cd server
 5. Open Pull Request
 
 ### Development Guidelines
+
 - Follow ESLint rules
 - Write meaningful commit messages
 - Test thoroughly before submitting
