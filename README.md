@@ -1,176 +1,249 @@
 # 🎓 LMS E-Learning Platform
 
-A modern, full-featured Learning Management System (LMS) built with React and Vite. This platform provides a comprehensive e-learning experience for both students and educators, featuring course management, video playback, progress tracking, and more.
+A comprehensive, full-stack Learning Management System (LMS) built with modern web technologies. This platform empowers educators to create and manage courses while providing students with an engaging, interactive learning experience featuring video lectures, progress tracking, and seamless payment integration.
 
 ![React](https://img.shields.io/badge/React-19.2.0-61DAFB?logo=react)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?logo=vite)
+![Express](https://img.shields.io/badge/Express-4.19.2-000000?logo=express)
+![MongoDB](https://img.shields.io/badge/MongoDB-9.1.3-47A248?logo=mongodb)
+![Stripe](https://img.shields.io/badge/Stripe-20.1.2-635BFF?logo=stripe)
+![Clerk](https://img.shields.io/badge/Clerk-5.59.3-6C47FF?logo=clerk)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1.18-38B2AC?logo=tailwind-css)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## 📋 Table of Contents
 
+- [Overview](#-overview)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
 - [Environment Variables](#-environment-variables)
-- [Available Scripts](#-available-scripts)
-- [Key Features Breakdown](#-key-features-breakdown)
-- [Pages & Routes](#-pages--routes)
-- [Components Overview](#-components-overview)
-- [State Management](#-state-management)
-- [Building for Production](#-building-for-production)
+- [Installation & Setup](#-installation--setup)
+- [API Documentation](#-api-documentation)
+- [Database Models](#-database-models)
+- [Dependencies](#-dependencies)
+- [Deployment](#-deployment)
 - [Contributing](#-contributing)
+- [License](#-license)
+- [Author](#-author)
+
+## 🌟 Overview
+
+This LMS platform is a production-ready application that demonstrates modern full-stack development practices. It features role-based access control for students and educators, real-time payment processing, cloud-based media storage, and comprehensive course management. The system supports video-based learning with YouTube integration, progress tracking, and analytics dashboards.
+
+### Key Highlights
+
+- **Dual User Roles**: Separate interfaces for students and educators
+- **Video Learning**: Integrated YouTube player with chapter navigation
+- **Payment Integration**: Stripe-powered checkout with webhook handling
+- **Cloud Storage**: Cloudinary for media uploads
+- **Authentication**: Clerk-based user management with webhooks
+- **Progress Tracking**: Detailed learning progress and completion metrics
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Real-time Analytics**: Educator dashboards with earnings and enrollment data
 
 ## ✨ Features
 
 ### 👨‍🎓 Student Features
 
-- **Homepage with Hero Section**: Engaging landing page with search functionality
-- **Course Discovery**: Browse and search through available courses
-- **Course Details**: Comprehensive course information with:
-  - Course description and metadata
-  - Ratings and reviews
-  - Student enrollment count
-  - Course curriculum preview
+- **Interactive Homepage**: Hero section with search and featured courses
+- **Course Discovery**: Advanced search and filtering capabilities
+- **Detailed Course Pages**: Comprehensive course information including:
+  - Rich descriptions and metadata
+  - Student ratings and reviews
+  - Enrollment statistics
+  - Curriculum preview with chapter structure
   - Free preview lectures
-  - Pricing with discount calculations
-- **Course Player**: Interactive video learning experience with:
+  - Dynamic pricing with discount calculations
+- **Video Learning Player**: Full-featured course player with:
   - YouTube video integration
-  - Chapter-based course structure
-  - Lecture navigation
-  - Progress tracking
-  - Mark lectures as complete
+  - Chapter-based navigation
+  - Lecture progress tracking
+  - Completion marking
   - Course rating system
-- **My Enrollments**: Track enrolled courses with:
-  - Progress visualization
-  - Filter by status (All, Ongoing, Completed)
-  - Search functionality
-  - Quick resume/access to courses
-- **Testimonials & Social Proof**: Student testimonials and company logos
-- **Responsive Design**: Fully responsive across all devices
+- **Enrollment Management**: Personal dashboard for:
+  - Progress visualization with progress bars
+  - Course filtering (All, Ongoing, Completed)
+  - Search within enrolled courses
+  - Quick resume functionality
+- **Social Proof**: Testimonials and company partnerships
+- **Responsive Experience**: Optimized for all device sizes
 
 ### 👨‍🏫 Educator Features
 
-- **Educator Dashboard**: Comprehensive analytics dashboard showing:
-  - Total enrollments
-  - Total courses published
-  - Total earnings
-  - Latest enrollments table
-- **Course Creation**: Rich course creation interface with:
-  - Course title and pricing
-  - Discount management
-  - Thumbnail upload
-  - Rich text description editor (Quill)
-  - Chapter-based structure
-  - Lecture management:
-    - Lecture title and duration
-    - Video URL (YouTube)
-    - Free preview option
-- **My Courses**: Manage published courses with:
-  - Course listing with thumbnails
+- **Analytics Dashboard**: Comprehensive metrics including:
+  - Total student enrollments
+  - Published courses count
+  - Revenue tracking
+  - Recent enrollment activity
+- **Course Creation Suite**: Rich content creation tools:
+  - Course metadata management (title, pricing, discounts)
+  - Thumbnail upload functionality
+  - Quill-powered rich text descriptions
+  - Chapter and lecture organization
+  - Video URL management with preview options
+- **Course Portfolio**: Manage published content with:
+  - Course listings with visual thumbnails
   - Earnings per course
-  - Student enrollment count
-  - Publication dates
-- **Students Enrolled**: View and manage enrolled students
-- **Sidebar Navigation**: Easy navigation between educator features
+  - Enrollment statistics
+  - Publication tracking
+- **Student Oversight**: View and manage enrolled students
+- **Intuitive Navigation**: Sidebar-based educator interface
 
 ## 🛠 Tech Stack
 
-### Core Technologies
-- **React 19.2.0** - Modern UI library
-- **Vite 7.2.4** - Next-generation frontend tooling
-- **React Router DOM 7.12.0** - Client-side routing
+### Frontend (React + Vite)
 
-### UI & Styling
+#### Core Technologies
+- **React 19.2.0** - Modern component-based UI library
+- **Vite 7.2.4** - Lightning-fast build tool and dev server
+- **React Router DOM 7.12.0** - Declarative routing for React
+
+#### UI & Styling
 - **Tailwind CSS 4.1.18** - Utility-first CSS framework
-- **Framer Motion 12.25.0** - Animation library
-- **Lucide React 0.562.0** - Icon library
+- **Framer Motion 12.25.0** - Production-ready motion library
+- **Lucide React 0.562.0** - Beautiful icon library
 
-### Authentication
-- **Clerk React 5.59.3** - Complete authentication solution
+#### Authentication & Content
+- **Clerk React 5.59.3** - Complete user management solution
+- **Quill 2.0.3** - Powerful rich text editor
+- **React YouTube 10.1.0** - YouTube player integration
 
-### Rich Content
-- **Quill 2.0.3** - Rich text editor for course descriptions
-- **React YouTube 10.1.0** - YouTube video player integration
+#### Utilities
+- **Axios 1.13.2** - HTTP client for API requests
+- **Humanize Duration 3.33.2** - Duration formatting
+- **React Simple Star Rating 5.1.7** - Rating component
+- **React Simple Typewriter 5.0.1** - Typewriter animation
+- **RC Progress 4.0.0** - Progress visualization
+- **Uniqid 5.4.0** - Unique identifier generation
+- **React Hot Toast 2.6.0** - Toast notifications
+- **React Toastify 11.0.5** - Advanced notifications
 
-### Utilities
-- **Humanize Duration 3.33.2** - Human-readable duration formatting
-- **React Simple Star Rating 5.1.7** - Star rating component
-- **React Simple Typewriter 5.0.1** - Typewriter effect
-- **RC Progress 4.0.0** - Progress bars
-- **Uniqid 5.4.0** - Unique ID generation
+#### Development Tools
+- **ESLint 9.39.1** - Code quality enforcement
+- **TypeScript Types** - Type safety for React ecosystem
 
-### Development Tools
-- **ESLint 9.39.1** - Code linting
-- **TypeScript Types** - Type definitions for React
+### Backend (Express + MongoDB)
+
+#### Core Technologies
+- **Express 4.19.2** - Fast, unopinionated web framework
+- **MongoDB 9.1.3** - NoSQL document database
+- **Mongoose** - Elegant MongoDB object modeling
+
+#### Authentication & Security
+- **Clerk Express 1.7.62** - Server-side authentication
+- **Svix 1.42.0** - Webhook verification
+
+#### Payments & Media
+- **Stripe 20.1.2** - Payment processing
+- **Cloudinary 2.8.0** - Media management and optimization
+
+#### Utilities
+- **CORS 2.8.5** - Cross-origin resource sharing
+- **Dotenv 17.2.3** - Environment variable management
+- **Multer 2.0.2** - File upload handling
+- **Nodemon 3.1.11** - Development auto-restart
 
 ## 📁 Project Structure
 
 ```
 LMS-PROJECT/
-│
-├── client/                 # Frontend Application
-│   ├── public/            # Static assets
-│   │   └── favicon.svg
+├── client/                          # React Frontend Application
+│   ├── public/
+│   │   └── favicon.svg              # Application favicon
 │   ├── src/
-│   │   ├── assets/        # Images, icons, and static data
-│   │   │   ├── *.svg      # Icon assets
-│   │   │   ├── *.png      # Image assets
-│   │   │   └── assets.js  # Asset exports and dummy data
-│   │   ├── components/    # Reusable components
-│   │   │   ├── educator/  # Educator-specific components
-│   │   │   │   ├── Footer.jsx
-│   │   │   │   ├── Navbar.jsx
-│   │   │   │   └── Sidebar.jsx
-│   │   │   └── student/   # Student-specific components
-│   │   │       ├── CallToAction.jsx
-│   │   │       ├── Companies.jsx
-│   │   │       ├── CourseCard.jsx
-│   │   │       ├── CourseSection.jsx
-│   │   │       ├── Footer.jsx
-│   │   │       ├── Hero.jsx
-│   │   │       ├── Loading.jsx
-│   │   │       ├── Navbar.jsx
-│   │   │       ├── Rating.jsx
-│   │   │       ├── SearchBar.jsx
-│   │   │       └── TestimonialsSection.jsx
-│   │   ├── context/       # React Context API
-│   │   │   └── AppContext.jsx  # Global state management
-│   │   ├── pages/         # Page components
-│   │   │   ├── educator/  # Educator pages
-│   │   │   │   ├── AddCourse.jsx
-│   │   │   │   ├── Dashboard.jsx
-│   │   │   │   ├── Educator.jsx
-│   │   │   │   ├── MyCourses.jsx
-│   │   │   │   └── StudentsEnrolled.jsx
-│   │   │   └── student/   # Student pages
-│   │   │       ├── CourseDetails.jsx
-│   │   │       ├── CourseList.jsx
-│   │   │       ├── Home.jsx
-│   │   │       ├── MyEnrollments.jsx
-│   │   │       └── Player.jsx
-│   │   ├── App.jsx        # Main app component with routing
-│   │   ├── main.jsx      # Application entry point
-│   │   └── index.css     # Global styles
-│   ├── .eslintrc.js      # ESLint configuration
-│   ├── index.html        # HTML template
-│   ├── package.json      # Dependencies and scripts
-│   ├── vite.config.js    # Vite configuration
-│   └── README.md         # Frontend-specific README
-│
-└── README.md             # This file (Project Overview)
+│   │   ├── assets/                  # Static assets and data
+│   │   │   ├── *.svg                # Icon files
+│   │   │   ├── *.png                # Image files
+│   │   │   └── assets.js            # Asset exports and dummy data
+│   │   ├── components/              # Reusable UI components
+│   │   │   ├── educator/            # Educator-specific components
+│   │   │   │   ├── Footer.jsx       # Educator footer
+│   │   │   │   ├── Navbar.jsx       # Educator navigation
+│   │   │   │   └── Sidebar.jsx      # Educator sidebar menu
+│   │   │   └── student/             # Student-specific components
+│   │   │       ├── CallToAction.jsx # CTA section
+│   │   │       ├── Companies.jsx    # Company logos
+│   │   │       ├── CourseCard.jsx   # Course preview card
+│   │   │       ├── CourseSection.jsx # Course listing section
+│   │   │       ├── Footer.jsx       # Student footer
+│   │   │       ├── Hero.jsx         # Homepage hero section
+│   │   │       ├── Loading.jsx      # Loading spinner
+│   │   │       ├── Navbar.jsx       # Student navigation
+│   │   │       ├── Rating.jsx       # Rating display
+│   │   │       ├── SearchBar.jsx    # Search functionality
+│   │   │       └── TestimonialsSection.jsx # Testimonials
+│   │   ├── context/
+│   │   │   └── AppContext.jsx       # Global state management
+│   │   ├── pages/                   # Route-level page components
+│   │   │   ├── educator/            # Educator pages
+│   │   │   │   ├── AddCourse.jsx    # Course creation form
+│   │   │   │   ├── Dashboard.jsx    # Educator analytics
+│   │   │   │   ├── Educator.jsx     # Educator layout wrapper
+│   │   │   │   ├── MyCourses.jsx    # Course management
+│   │   │   │   └── StudentsEnrolled.jsx # Student management
+│   │   │   └── student/             # Student pages
+│   │   │       ├── CourseDetails.jsx # Course information
+│   │   │       ├── CourseList.jsx   # Course browsing
+│   │   │       ├── Home.jsx         # Landing page
+│   │   │       ├── MyEnrollments.jsx # Enrollment dashboard
+│   │   │       ├── PaymentCancel.jsx # Payment failure
+│   │   │       ├── PaymentSuccess.jsx # Payment success
+│   │   │       └── Player.jsx       # Video learning player
+│   │   ├── App.jsx                  # Main app with routing
+│   │   ├── main.jsx                 # Application entry point
+│   │   └── index.css                # Global styles
+│   ├── .env                         # Environment variables
+│   ├── .gitignore                   # Git ignore rules
+│   ├── eslint.config.js             # ESLint configuration
+│   ├── index.html                   # HTML template
+│   ├── package.json                 # Frontend dependencies
+│   ├── vercel.json                  # Vercel deployment config
+│   └── vite.config.js               # Vite configuration
+├── server/                          # Express Backend API
+│   ├── configs/                     # Configuration files
+│   │   ├── cloudinary.js            # Cloudinary setup
+│   │   │   ├── mongodb.js           # MongoDB connection
+│   │   └── multer.js                # File upload config
+│   ├── controllers/                 # Route controllers
+│   │   ├── courseController.js      # Course management logic
+│   │   ├── educatorController.js    # Educator operations
+│   │   ├── userController.js        # User management
+│   │   └── webhooks.js              # Webhook handlers
+│   ├── middlewares/
+│   │   └── authMiddleware.js        # Authentication middleware
+│   ├── models/                      # Mongoose data models
+│   │   ├── Course.js                # Course schema
+│   │   ├── CourseProgress.js        # Progress tracking
+│   │   ├── Purchase.js              # Purchase records
+│   │   └── User.js                  # User schema
+│   ├── routes/                      # API route definitions
+│   │   ├── courseRoute.js           # Course endpoints
+│   │   ├── educatorRoutes.js        # Educator endpoints
+│   │   └── userRoutes.js            # User endpoints
+│   ├── .env                         # Backend environment vars
+│   ├── .gitignore                   # Backend git ignore
+│   ├── package.json                 # Backend dependencies
+│   ├── server.js                    # Main server file
+│   └── vercel.json                  # Vercel deployment config
+├── .git/                            # Git repository
+├── README.md                        # This file
+└── package.json                     # Root package.json (if any)
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- **Node.js** (v18 or higher recommended)
+- **Node.js** (v18 or higher)
 - **npm** or **yarn** package manager
+- **MongoDB** (local or cloud instance)
 - **Clerk Account** (for authentication)
+- **Stripe Account** (for payments)
+- **Cloudinary Account** (for media storage)
 
-### Installation
+### Quick Setup
 
 1. **Clone the repository**
    ```bash
@@ -178,350 +251,284 @@ LMS-PROJECT/
    cd LMS-PROJECT
    ```
 
-2. **Navigate to client directory and install dependencies**
+2. **Install dependencies**
    ```bash
-   cd client
-   npm install
+   # Install frontend dependencies
+   cd client && npm install
+
+   # Install backend dependencies
+   cd ../server && npm install
    ```
 
-3. **Set up environment variables**
-   
-   Create a `.env` file in the `client/` directory:
-   ```bash
-   cd client
-   touch .env
-   ```
-   
-   Add the following to `.env`:
-   ```env
-   # Clerk Authentication
-   VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
-   
-   # Currency Symbol (optional, defaults to $)
-   VITE_CURRENCY=$
-   ```
+3. **Configure environment variables**
+   - Copy `.env.example` files to `.env` in both `client/` and `server/`
+   - Fill in your API keys and configuration
 
-4. **Start the development server**
+4. **Start the development servers**
    ```bash
+   # Start backend (from server/)
+   npm run dev
+
+   # Start frontend (from client/ in new terminal)
    npm run dev
    ```
 
-5. **Open your browser**
-   Navigate to `http://localhost:5173` (or the port shown in terminal)
+5. **Access the application**
+   - Frontend: `http://localhost:5173`
+   - Backend API: `http://localhost:5000`
 
 ## 🔐 Environment Variables
 
-Create a `.env` file in the `client/` directory with the following variables:
+### Frontend (.env in client/)
 
 ```env
-# Clerk Authentication
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
+# Backend API URL
+VITE_BACKEND_URL=http://localhost:5000
 
-# Currency Symbol (optional, defaults to $)
+# Clerk Authentication
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+
+# Currency symbol (optional)
 VITE_CURRENCY=$
 ```
 
-### Getting Clerk Keys
+### Backend (.env in server/)
 
-1. Sign up at [clerk.com](https://clerk.com)
-2. Create a new application
-3. Copy the Publishable Key from the dashboard
-4. Add it to your `.env` file
+```env
+# Server Configuration
+PORT=5000
 
-## 📜 Available Scripts
+# Database
+MONGODB_URI=mongodb://localhost:27017/lms-project
 
-Navigate to the `client/` directory to run these commands:
+# Clerk Authentication
+CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+CLERK_SECRET_KEY=sk_test_your_key_here
 
-### Development
-```bash
-cd client
-npm run dev
+# Stripe Payment Processing
+STRIPE_SECRET_KEY=sk_test_your_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+
+# Cloudinary Media Storage
+CLOUDINARY_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_SECRET_KEY=your_secret_key
 ```
-Starts the development server with hot module replacement (HMR) at `http://localhost:5173`
 
-### Build
+## 📦 Installation & Setup
+
+### Detailed Setup Instructions
+
+1. **Database Setup**
+   - Install MongoDB locally or use MongoDB Atlas
+   - Update `MONGODB_URI` in server/.env
+
+2. **Clerk Configuration**
+   - Create account at [clerk.com](https://clerk.com)
+   - Set up application and copy keys
+   - Configure webhooks for user sync
+
+3. **Stripe Setup**
+   - Create account at [stripe.com](https://stripe.com)
+   - Get API keys and webhook secret
+   - Configure webhook endpoint: `http://localhost:5000/stripe`
+
+4. **Cloudinary Setup**
+   - Create account at [cloudinary.com](https://cloudinary.com)
+   - Get cloud name and API credentials
+
+5. **Development Workflow**
+   ```bash
+   # Backend development
+   cd server && npm run dev
+
+   # Frontend development
+   cd client && npm run dev
+
+   # Build for production
+   cd client && npm run build
+   ```
+
+## 📡 API Documentation
+
+### Base URL
+```
+http://localhost:5000/api
+```
+
+### Authentication
+All protected routes require Clerk JWT tokens.
+
+### Key Endpoints
+
+#### User Routes (`/api/user`)
+- `GET /profile` - Get user profile
+- `POST /webhook` - Clerk webhook handler
+
+#### Course Routes (`/api/course`)
+- `GET /list` - Get all courses
+- `GET /:id` - Get course details
+- `POST /purchase` - Purchase course
+- `POST /verify-payment` - Verify payment
+
+#### Educator Routes (`/api/educator`)
+- `POST /add-course` - Create new course
+- `GET /courses` - Get educator's courses
+- `GET /dashboard` - Get dashboard stats
+- `GET /students` - Get enrolled students
+
+#### Webhooks
+- `POST /clerk` - Clerk user events
+- `POST /stripe` - Stripe payment events
+
+## 🗄 Database Models
+
+### User Model
+```javascript
+{
+  _id: ObjectId,
+  clerkId: String, // Clerk user ID
+  name: String,
+  email: String,
+  imageUrl: String,
+  role: String, // 'student' or 'educator'
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### Course Model
+```javascript
+{
+  courseTitle: String,
+  courseDescription: String,
+  courseThumbnail: String,
+  coursePrice: Number,
+  discount: Number,
+  isPublished: Boolean,
+  courseContent: [ChapterSchema],
+  courseRatings: [{ userId: String, rating: Number }],
+  educator: String, // User reference
+  enrolledStudents: [String], // User IDs
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### Purchase Model
+```javascript
+{
+  courseId: String,
+  userId: String,
+  amount: Number,
+  status: String, // 'pending', 'completed', 'failed'
+  createdAt: Date
+}
+```
+
+### CourseProgress Model
+```javascript
+{
+  userId: String,
+  courseId: String,
+  completedLectures: [String], // Lecture IDs
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+## 📋 Dependencies
+
+### Frontend Dependencies (client/package.json)
+
+#### Production
+- **React Ecosystem**: react, react-dom, react-router-dom
+- **Styling**: tailwindcss, framer-motion, lucide-react
+- **Authentication**: @clerk/clerk-react
+- **Content**: quill, react-youtube
+- **Utilities**: axios, humanize-duration, react-simple-star-rating, rc-progress, uniqid
+- **Notifications**: react-hot-toast, react-toastify
+
+#### Development
+- **Build Tools**: @vitejs/plugin-react, vite
+- **Linting**: eslint, @eslint/js
+- **Types**: @types/react, @types/react-dom
+
+### Backend Dependencies (server/package.json)
+
+#### Production
+- **Web Framework**: express
+- **Database**: mongoose
+- **Authentication**: @clerk/express, svix
+- **Payments**: stripe
+- **Media**: cloudinary
+- **Utilities**: cors, dotenv, multer
+
+#### Development
+- **Development**: nodemon
+
+## 🚀 Deployment
+
+### Frontend Deployment (Vercel)
 ```bash
 cd client
 npm run build
+# Deploy dist/ folder to Vercel
 ```
-Creates an optimized production build in the `dist` directory
 
-### Preview
+### Backend Deployment (Vercel/Railway)
 ```bash
-cd client
-npm run preview
-```
-Preview the production build locally before deploying
-
-### Lint
-```bash
-cd client
-npm run lint
-```
-Run ESLint to check for code quality issues
-
-## 🎯 Key Features Breakdown
-
-### Course Management System
-
-#### For Students:
-- **Search & Filter**: Advanced search functionality to find courses
-- **Course Preview**: View course details, curriculum, and free preview lectures
-- **Enrollment Tracking**: Monitor progress with visual progress bars
-- **Video Learning**: Integrated YouTube player for seamless learning
-- **Progress Management**: Mark lectures as complete and track overall progress
-
-#### For Educators:
-- **Rich Course Editor**: Create courses with Quill rich text editor
-- **Chapter Organization**: Organize content into chapters and lectures
-- **Media Management**: Upload course thumbnails
-- **Analytics Dashboard**: Track enrollments, earnings, and student engagement
-- **Student Management**: View enrolled students per course
-
-### User Interface
-
-- **Modern Design**: Clean, professional UI with Tailwind CSS
-- **Responsive Layout**: Mobile-first design that works on all screen sizes
-- **Smooth Animations**: Framer Motion for engaging user interactions
-- **Loading States**: Proper loading indicators for better UX
-- **Error Handling**: Graceful error states and fallbacks
-
-### Authentication & Security
-
-- **Clerk Integration**: Secure authentication with Clerk
-- **Protected Routes**: Route protection for educator dashboard
-- **User Session Management**: Automatic session handling
-
-## 🗺 Pages & Routes
-
-### Student Routes
-
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/` | `Home` | Landing page with hero, courses, testimonials |
-| `/course-list` | `CourseList` | Browse all available courses |
-| `/course-list/:input` | `CourseList` | Search results page |
-| `/course-details/:id` | `CourseDetails` | Detailed course information |
-| `/my-enrollments` | `MyEnrollments` | Student's enrolled courses |
-| `/player/:courseId` | `Player` | Video player for course content |
-| `/loading/:path` | `Loading` | Loading state component |
-
-### Educator Routes
-
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/educator` | `Educator` (Layout) | Main educator layout with sidebar |
-| `/educator` | `Dashboard` | Analytics and overview |
-| `/educator/add-course` | `AddCourse` | Course creation interface |
-| `/educator/my-courses` | `MyCourses` | Manage published courses |
-| `/educator/students-enrolled` | `StudentsEnrolled` | View enrolled students |
-
-## 🧩 Components Overview
-
-### Student Components
-
-- **Hero**: Landing page hero section with search
-- **SearchBar**: Course search functionality
-- **CourseCard**: Reusable course card component
-- **CourseSection**: Featured courses display
-- **Companies**: Company logos section
-- **TestimonialsSection**: Student testimonials
-- **CallToAction**: CTA section
-- **Rating**: Star rating component
-- **Loading**: Loading spinner component
-- **Navbar**: Student navigation bar
-- **Footer**: Footer with links and social media
-
-### Educator Components
-
-- **Navbar**: Educator top navigation
-- **Sidebar**: Side navigation menu
-- **Footer**: Educator footer
-
-### Shared Features
-
-- **Responsive Design**: All components are mobile-responsive
-- **Accessibility**: Semantic HTML and ARIA labels
-- **Performance**: Optimized with React best practices
-
-## 🔄 State Management
-
-The application uses **React Context API** for global state management:
-
-### AppContext Features:
-- **Course Management**: Fetch and manage all courses
-- **Enrollment Tracking**: Track user enrolled courses
-- **Utility Functions**:
-  - `calculateRating()`: Calculate average course rating
-  - `calculateChapterTime()`: Calculate chapter duration
-  - `calculateCourseDuration()`: Calculate total course duration
-  - `calculateNoOfCourses()`: Count total lectures
-- **Navigation**: Programmatic navigation helper
-- **Currency**: Global currency symbol configuration
-
-### Context Usage:
-```jsx
-import { useContext } from 'react';
-import { AppContext } from './context/AppContext';
-
-const MyComponent = () => {
-  const { allCourses, calculateRating, currency } = useContext(AppContext);
-  // Use context values
-};
+cd server
+# Configure environment variables
+# Deploy to preferred platform
 ```
 
-## 🏗 Building for Production
-
-### Build Process
-
-1. **Navigate to client directory**
-   ```bash
-   cd client
-   ```
-
-2. **Optimize build**
-   ```bash
-   npm run build
-   ```
-
-3. **Test production build**
-   ```bash
-   npm run preview
-   ```
-
-4. **Deploy**
-   The `dist` folder contains optimized, production-ready files that can be deployed to:
-   - **Vercel**: Connect your GitHub repo
-   - **Netlify**: Drag and drop the `dist` folder
-   - **AWS S3**: Upload `dist` contents
-   - **Any static hosting**: Serve the `dist` folder
-
-### Build Output
-
-The build process:
-- ✅ Minifies JavaScript and CSS
-- ✅ Optimizes images
-- ✅ Tree-shakes unused code
-- ✅ Generates source maps for debugging
-- ✅ Creates optimized chunks for code splitting
-
-## 🎨 Customization
-
-### Styling
-- Modify `client/src/index.css` for global styles
-- Use Tailwind utility classes throughout components
-- Customize Tailwind config (if needed) in `tailwind.config.js`
-
-### Theme Colors
-The application uses Tailwind's default color palette. To customize:
-1. Create a `tailwind.config.js` file in the `client/` directory
-2. Extend the theme with your brand colors
-3. Update components to use custom color classes
-
-### Adding New Features
-1. Create components in appropriate directories (`student/` or `educator/`)
-2. Add routes in `App.jsx`
-3. Update navigation components if needed
-4. Add state management in `AppContext.jsx` if required
-
-## 🧪 Testing
-
-While the project doesn't include test files yet, you can add:
-- **Vitest** for unit testing
-- **React Testing Library** for component testing
-- **Playwright** or **Cypress** for E2E testing
-
-## 📦 Dependencies Overview
-
-### Production Dependencies
-- React ecosystem for UI
-- Clerk for authentication
-- React Router for navigation
-- Tailwind CSS for styling
-- Quill for rich text editing
-- YouTube integration for video playback
-- Animation and UI enhancement libraries
-
-### Development Dependencies
-- Vite for build tooling
-- ESLint for code quality
-- TypeScript types for better DX
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Port already in use**
-```bash
-# Kill process on port 5173
-npx kill-port 5173
-# Or use a different port
-npm run dev -- --port 3000
-```
-
-**Module not found errors**
-```bash
-# Clear cache and reinstall
-cd client
-rm -rf node_modules package-lock.json
-npm install
-```
-
-**Clerk authentication not working**
-- Verify `VITE_CLERK_PUBLISHABLE_KEY` is set correctly in `client/.env`
-- Check Clerk dashboard for correct key
-- Ensure key starts with `pk_`
-
-**Build errors**
-- Check Node.js version (v18+)
-- Clear `.vite` cache folder in `client/` directory
-- Verify all environment variables are set
+### Production Considerations
+- Set `NODE_ENV=production`
+- Configure production database
+- Set up proper CORS origins
+- Enable HTTPS
+- Configure webhook endpoints
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
-
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
-### Code Style
+### Development Guidelines
 - Follow ESLint rules
-- Use meaningful component and variable names
-- Add comments for complex logic
-- Keep components small and focused
+- Write meaningful commit messages
+- Test thoroughly before submitting
+- Update documentation as needed
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👤 Author
 
 **Riyanshu Sharma**
 
 - GitHub: [https://github.com/Riyanshu-256](https://github.com/Riyanshu-256)
+- LinkedIn: [Your LinkedIn Profile]
+- Portfolio: [Your Portfolio Website]
 
 ## 🙏 Acknowledgments
 
-- [React](https://react.dev/) - UI library
-- [Vite](https://vitejs.dev/) - Build tool
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
+- [React](https://react.dev/) - UI Framework
+- [Vite](https://vitejs.dev/) - Build Tool
+- [Express](https://expressjs.com/) - Web Framework
+- [MongoDB](https://mongodb.com/) - Database
+- [Stripe](https://stripe.com/) - Payment Processing
 - [Clerk](https://clerk.com/) - Authentication
-- [Quill](https://quilljs.com/) - Rich text editor
-- All other open-source contributors
-
-## 📞 Support
-
-For support, email your-email@example.com or open an issue in the repository.
-
-## ⭐ Support
-
-If you like this project, don't forget to **star** the repo ⭐
+- [Cloudinary](https://cloudinary.com/) - Media Storage
+- [Tailwind CSS](https://tailwindcss.com/) - Styling Framework
 
 ---
 
-**Built with ❤️ using React and Vite**
+**Built with ❤️ using React, Express, and MongoDB**
 
-Happy Coding 🚀
+⭐ If you found this project helpful, please give it a star! ⭐

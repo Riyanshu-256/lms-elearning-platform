@@ -78,23 +78,28 @@ A modern, full-featured Learning Management System (LMS) frontend built with Rea
 ## 🛠 Tech Stack
 
 ### Core Technologies
+
 - **React 19.2.0** - Modern UI library
 - **Vite 7.2.4** - Next-generation frontend tooling
 - **React Router DOM 7.12.0** - Client-side routing
 
 ### UI & Styling
+
 - **Tailwind CSS 4.1.18** - Utility-first CSS framework
 - **Framer Motion 12.25.0** - Animation library
 - **Lucide React 0.562.0** - Icon library
 
 ### Authentication
+
 - **Clerk React 5.59.3** - Complete authentication solution
 
 ### Rich Content
+
 - **Quill 2.0.3** - Rich text editor for course descriptions
 - **React YouTube 10.1.0** - YouTube video player integration
 
 ### Utilities
+
 - **Humanize Duration 3.33.2** - Human-readable duration formatting
 - **React Simple Star Rating 5.1.7** - Star rating component
 - **React Simple Typewriter 5.0.1** - Typewriter effect
@@ -102,6 +107,7 @@ A modern, full-featured Learning Management System (LMS) frontend built with Rea
 - **Uniqid 5.4.0** - Unique ID generation
 
 ### Development Tools
+
 - **ESLint 9.39.1** - Code linting
 - **TypeScript Types** - Type definitions for React
 
@@ -169,23 +175,28 @@ client/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd client
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
+
    Edit `.env` and add your configuration (see [Environment Variables](#-environment-variables))
 
 4. **Start the development server**
+
    ```bash
    npm run dev
    ```
@@ -198,6 +209,9 @@ client/
 Create a `.env` file in the root directory with the following variables:
 
 ```env
+# Backend API base URL
+VITE_BACKEND_URL=http://localhost:5000
+
 # Clerk Authentication
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
 
@@ -215,27 +229,35 @@ VITE_CURRENCY=$
 ## 📜 Available Scripts
 
 ### Development
+
 ```bash
 npm run dev
 ```
+
 Starts the development server with hot module replacement (HMR) at `http://localhost:5173`
 
 ### Build
+
 ```bash
 npm run build
 ```
+
 Creates an optimized production build in the `dist` directory
 
 ### Preview
+
 ```bash
 npm run preview
 ```
+
 Preview the production build locally before deploying
 
 ### Lint
+
 ```bash
 npm run lint
 ```
+
 Run ESLint to check for code quality issues
 
 ## 🎯 Key Features Breakdown
@@ -243,6 +265,7 @@ Run ESLint to check for code quality issues
 ### Course Management System
 
 #### For Students:
+
 - **Search & Filter**: Advanced search functionality to find courses
 - **Course Preview**: View course details, curriculum, and free preview lectures
 - **Enrollment Tracking**: Monitor progress with visual progress bars
@@ -250,6 +273,7 @@ Run ESLint to check for code quality issues
 - **Progress Management**: Mark lectures as complete and track overall progress
 
 #### For Educators:
+
 - **Rich Course Editor**: Create courses with Quill rich text editor
 - **Chapter Organization**: Organize content into chapters and lectures
 - **Media Management**: Upload course thumbnails
@@ -260,228 +284,69 @@ Run ESLint to check for code quality issues
 
 - **Modern Design**: Clean, professional UI with Tailwind CSS
 - **Responsive Layout**: Mobile-first design that works on all screen sizes
-- **Smooth Animations**: Framer Motion for engaging user interactions
-- **Loading States**: Proper loading indicators for better UX
-- **Error Handling**: Graceful error states and fallbacks
 
-### Authentication & Security
+# Client — Frontend (React + Vite)
 
-- **Clerk Integration**: Secure authentication with Clerk
-- **Protected Routes**: Route protection for educator dashboard
-- **User Session Management**: Automatic session handling
+This folder contains the single-page application for LMS-PROJECT, built with React (Vite), Tailwind CSS, and Clerk for authentication.
 
-## 🗺 Pages & Routes
+## Quick Summary
 
-### Student Routes
+- Tech: React 19+, Vite, Tailwind CSS
+- Auth: Clerk
+- Video: react-youtube for embedded lectures
+- State: React Context (`src/context/AppContext.jsx`)
 
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/` | `Home` | Landing page with hero, courses, testimonials |
-| `/course-list` | `CourseList` | Browse all available courses |
-| `/course-list/:input` | `CourseList` | Search results page |
-| `/course-details/:id` | `CourseDetails` | Detailed course information |
-| `/my-enrollments` | `MyEnrollments` | Student's enrolled courses |
-| `/player/:courseId` | `Player` | Video player for course content |
-| `/loading/:path` | `Loading` | Loading state component |
+## Install & Run
 
-### Educator Routes
-
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/educator` | `Educator` (Layout) | Main educator layout with sidebar |
-| `/educator` | `Dashboard` | Analytics and overview |
-| `/educator/add-course` | `AddCourse` | Course creation interface |
-| `/educator/my-courses` | `MyCourses` | Manage published courses |
-| `/educator/students-enrolled` | `StudentsEnrolled` | View enrolled students |
-
-## 🧩 Components Overview
-
-### Student Components
-
-- **Hero**: Landing page hero section with search
-- **SearchBar**: Course search functionality
-- **CourseCard**: Reusable course card component
-- **CourseSection**: Featured courses display
-- **Companies**: Company logos section
-- **TestimonialsSection**: Student testimonials
-- **CallToAction**: CTA section
-- **Rating**: Star rating component
-- **Loading**: Loading spinner component
-- **Navbar**: Student navigation bar
-- **Footer**: Footer with links and social media
-
-### Educator Components
-
-- **Navbar**: Educator top navigation
-- **Sidebar**: Side navigation menu
-- **Footer**: Educator footer
-
-### Shared Features
-
-- **Responsive Design**: All components are mobile-responsive
-- **Accessibility**: Semantic HTML and ARIA labels
-- **Performance**: Optimized with React best practices
-
-## 🔄 State Management
-
-The application uses **React Context API** for global state management:
-
-### AppContext Features:
-- **Course Management**: Fetch and manage all courses
-- **Enrollment Tracking**: Track user enrolled courses
-- **Utility Functions**:
-  - `calculateRating()`: Calculate average course rating
-  - `calculateChapterTime()`: Calculate chapter duration
-  - `calculateCourseDuration()`: Calculate total course duration
-  - `calculateNoOfCourses()`: Count total lectures
-- **Navigation**: Programmatic navigation helper
-- **Currency**: Global currency symbol configuration
-
-### Context Usage:
-```jsx
-import { useContext } from 'react';
-import { AppContext } from './context/AppContext';
-
-const MyComponent = () => {
-  const { allCourses, calculateRating, currency } = useContext(AppContext);
-  // Use context values
-};
-```
-
-## 🏗 Building for Production
-
-### Build Process
-
-1. **Optimize build**
-   ```bash
-   npm run build
-   ```
-
-2. **Test production build**
-   ```bash
-   npm run preview
-   ```
-
-3. **Deploy**
-   The `dist` folder contains optimized, production-ready files that can be deployed to:
-   - **Vercel**: Connect your GitHub repo
-   - **Netlify**: Drag and drop the `dist` folder
-   - **AWS S3**: Upload `dist` contents
-   - **Any static hosting**: Serve the `dist` folder
-
-### Build Output
-
-The build process:
-- ✅ Minifies JavaScript and CSS
-- ✅ Optimizes images
-- ✅ Tree-shakes unused code
-- ✅ Generates source maps for debugging
-- ✅ Creates optimized chunks for code splitting
-
-## 🎨 Customization
-
-### Styling
-- Modify `src/index.css` for global styles
-- Use Tailwind utility classes throughout components
-- Customize Tailwind config (if needed) in `tailwind.config.js`
-
-### Theme Colors
-The application uses Tailwind's default color palette. To customize:
-1. Create a `tailwind.config.js` file
-2. Extend the theme with your brand colors
-3. Update components to use custom color classes
-
-### Adding New Features
-1. Create components in appropriate directories (`student/` or `educator/`)
-2. Add routes in `App.jsx`
-3. Update navigation components if needed
-4. Add state management in `AppContext.jsx` if required
-
-## 🧪 Testing
-
-While the project doesn't include test files yet, you can add:
-- **Vitest** for unit testing
-- **React Testing Library** for component testing
-- **Playwright** or **Cypress** for E2E testing
-
-## 📦 Dependencies Overview
-
-### Production Dependencies
-- React ecosystem for UI
-- Clerk for authentication
-- React Router for navigation
-- Tailwind CSS for styling
-- Quill for rich text editing
-- YouTube integration for video playback
-- Animation and UI enhancement libraries
-
-### Development Dependencies
-- Vite for build tooling
-- ESLint for code quality
-- TypeScript types for better DX
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Port already in use**
 ```bash
-# Kill process on port 5173
-npx kill-port 5173
-# Or use a different port
-npm run dev -- --port 3000
-```
-
-**Module not found errors**
-```bash
-# Clear cache and reinstall
-rm -rf node_modules package-lock.json
+# from repo root
+cd client
 npm install
+npm run dev
 ```
 
-**Clerk authentication not working**
-- Verify `VITE_CLERK_PUBLISHABLE_KEY` is set correctly
-- Check Clerk dashboard for correct key
-- Ensure key starts with `pk_`
+Default dev URL: http://localhost:5173
 
-**Build errors**
-- Check Node.js version (v18+)
-- Clear `.vite` cache folder
-- Verify all environment variables are set
+## Environment Variables
 
-## 🤝 Contributing
+Create a `.env` in `client/` with:
 
-Contributions are welcome! Please follow these steps:
+```env
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+VITE_CURRENCY=$
+```
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Vite prefixes required env vars with `VITE_` to expose them to the client.
 
-### Code Style
-- Follow ESLint rules
-- Use meaningful component and variable names
-- Add comments for complex logic
-- Keep components small and focused
+## Scripts
 
-## 📄 License
+- `npm run dev` — start Vite dev server
+- `npm run build` — production build (output `dist/`)
+- `npm run preview` — preview production build locally
+- `npm run lint` — run ESLint
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Folder Map
 
-## 🙏 Acknowledgments
+- `src/` — application source
+  - `components/` — reusable UI components (`student/`, `educator/`)
+  - `pages/` — route-level pages (`Home`, `CourseList`, `CourseDetails`, `Player`, `Educator/*`)
+  - `context/AppContext.jsx` — global state + helper utilities (currency, course utilities, API helpers)
+  - `main.jsx`, `App.jsx` — app bootstrap and routing
 
-- [React](https://react.dev/) - UI library
-- [Vite](https://vitejs.dev/) - Build tool
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
-- [Clerk](https://clerk.com/) - Authentication
-- [Quill](https://quilljs.com/) - Rich text editor
-- All other open-source contributors
+## Important Components & Pages
 
-## 📞 Support
+- `Player.jsx` — course player, integrates YouTube player and chapter/lecture navigation
+- `CourseDetails.jsx` — course metadata, curriculum, ratings, enroll button
+- `AddCourse.jsx` (educator) — create course UI, uploads thumbnail to server
+- `Dashboard.jsx` — educator analytics (earnings, enrollments)
 
-For support, email your-email@example.com or open an issue in the repository.
+## Integration Points
 
----
+- Calls backend at `/api/*` for courses, purchases, user/profile, and educator endpoints.
+- Uses Clerk for authentication; ensure `VITE_CLERK_PUBLISHABLE_KEY` is set and server Clerk webhook & secret are configured.
 
-**Built with ❤️ using React and Vite**
+## Notes for Resume / Demo
+
+- Start the server and client, create a test educator account, add a course, and create a Stripe test checkout to showcase end-to-end flow.
+
+Consider adding a lightweight `env.example` file and a short demo script to step through the primary flows for recruiters.

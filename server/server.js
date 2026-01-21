@@ -20,7 +20,12 @@ await connectCloudinary();
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 
 // ================= NORMAL MIDDLEWARE =================
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // ================= CLERK AUTH =================
