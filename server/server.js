@@ -22,7 +22,7 @@ app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 // ================= NORMAL MIDDLEWARE =================
 app.use(
   cors({
-    origin: "*",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
 );
